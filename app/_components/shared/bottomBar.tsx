@@ -6,7 +6,7 @@ import { HiHome } from "react-icons/hi2";
 
 export default function BottomBar() {
     return (
-        <div className="absolute bottom-0 left-0 w-full p-4">
+        <div className="absolute bottom-0 left-0 w-full p-4 ">
             <nav className="border bg-[#211515] rounded-2xl border-gray-300">
                 <div className="grid grid-cols-4 text-white">
                     <Link
