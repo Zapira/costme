@@ -1,6 +1,7 @@
 import Navbar from "../_components/shared/navbar";
 import BottomBar from "../_components/shared/bottomBar";
 import AccountCard from "../_components/home/accountCard";
+import RemainingCard from "../_components/home/remainingCard";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <Navbar />
       <BottomBar />
       <AccountCard />
+      <RemainingCard />
     </div>
   );
 }
