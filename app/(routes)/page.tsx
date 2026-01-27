@@ -5,7 +5,7 @@ import RemainingCard from "../_components/home/remainingCard";
 
 export default function Home() {
   return (
-    <div className="bg-white p-6 shadow-md max-w-lg mx-auto min-h-screen relative">
+    <div className="bg-white p-6 shadow-md max-w-lg mx-auto min-h-[calc(100vh-56px)] relative">
       <Navbar />
       <BottomBar />
       <AccountCard />
