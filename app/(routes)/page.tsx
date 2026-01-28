@@ -1,17 +1,14 @@
-import Navbar from "../_components/shared/navbar";
-import BottomBar from "../_components/shared/bottomBar";
-import AccountCard from "../_components/home/accountCard";
-import RemainingCard from "../_components/home/remainingCard";
-import LastTransaction from "../_components/home/lastTransaction";
+import Hero from "../_components/home/homeSecond/hero";
+import SecondNavbar from "../_components/shared/secondNavbar";
 
 export default function Home() {
+
   return (
-    <div className="bg-gray-50 p-6 shadow-md max-w-lg mx-auto min-h-screen ">
-      <Navbar />
-      <BottomBar />
-      <AccountCard />
-      <RemainingCard />
-      <LastTransaction />
+    <div className="bg-gray-50 shadow-md max-w-lg mx-auto min-h-screen ">
+      <div className="bg-white">
+        <SecondNavbar />
+      </div>
+      <Hero />
     </div>
   );
 }
