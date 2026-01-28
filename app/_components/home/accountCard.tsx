@@ -1,9 +1,9 @@
 export default function AccountCard() {
     return (
-        <div className="mt-16 flex justify-center">
-            <div className="relative w-full h-[250px] rounded-2xl bg-linear-to-br from-[#211515] via-[#002292] to-[#000a66] p-5 text-white shadow-xl">
+        <div className="mt-6 flex justify-center">
+            <div className="relative w-full h-[200px] rounded-2xl bg-linear-to-br from-[#211515] via-[#002292] to-[#000a66] p-5 text-white shadow-xl">
                 <div>
-                    <p className="text-xs opacity-80">Saldo</p>
+                    <p className="text-xs opacity-80">Sisa Saldo</p>
                     <h2 className="text-2xl font-bold tracking-wide">
                         Rp 0
                     </h2>
