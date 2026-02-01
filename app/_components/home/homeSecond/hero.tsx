@@ -1,5 +1,6 @@
 import { BsArrowRight } from "react-icons/bs";
 import { GiSparkles } from "react-icons/gi";
+import { Globe } from "../../shared/globe";
 
 export default function Hero() {
     return (
