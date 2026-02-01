@@ -1,6 +1,7 @@
 import { BsArrowRight } from "react-icons/bs";
 import { GiSparkles } from "react-icons/gi";
 import { Globe } from "../../shared/globe";
+import Link from "next/link";
 
 export default function Hero() {
     return (
@@ -30,10 +31,10 @@ export default function Hero() {
                     </p>
 
                     <div className="space-y-3 mb-6">
-                        <button className="w-full px-6 py-4  bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
+                        <Link href="/auth/login" className="w-full px-6 py-4  bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
                             Mulai Gratis
                             <BsArrowRight size={20} strokeWidth={3} />
-                        </button>
+                        </Link>
                     </div>
 
                 </div>
