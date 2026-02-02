@@ -2,15 +2,14 @@
 
 import { auth } from "@/app/_lib/firebaseAuth";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { serverTimestamp } from "firebase/database";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { serverTimestamp, ref, set } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useAuth } from "@/app/_providers/authProvider";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+
+
 
 export default function GoogleFormUI() {
     const [loading, setLoading] = useState(false);
@@ -27,9 +26,9 @@ export default function GoogleFormUI() {
             const user = result.user;
             if (!user) return;
 
-            const userRef = doc(db, "users", user.uid);
+            const userRef = ref(db, "users/" + user.uid);
 
-            await setDoc(
+            await set(
                 userRef,
                 {
                     uid: user.uid,
@@ -39,13 +38,12 @@ export default function GoogleFormUI() {
                     createdAt: serverTimestamp(),
                     isLoggedIn: true, // << update status login
                 },
-                { merge: true }
             );
 
             console.log("LOGIN SUCCESS");
 
             const idToken = await user.getIdToken();
-            document.cookie = `token=${idToken}; path=/; Secure; HttpOnly`;
+            document.cookie = `token=${idToken}; path=/`;
 
         } catch (error: any) {
             if (error.code === "auth/popup-closed-by-user") {
@@ -64,8 +62,8 @@ export default function GoogleFormUI() {
         try {
             const user = auth.currentUser;
             if (user) {
-                const userRef = doc(db, "users", user.uid);
-                await setDoc(userRef, { isLoggedIn: false }, { merge: true });
+                const userRef = ref(db, "users/" + user.uid);
+                await set(userRef, { isLoggedIn: false });
             }
 
             await signOut(auth);
