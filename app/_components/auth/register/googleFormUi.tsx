@@ -6,7 +6,7 @@ import { serverTimestamp, ref, set } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import {  useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/app/_providers/authProvider";
 
 
@@ -26,24 +26,18 @@ export default function GoogleFormUI() {
             const user = result.user;
             if (!user) return;
 
-            const userRef = ref(db, "users/" + user.uid);
 
-            await set(
-                userRef,
-                {
-                    uid: user.uid,
-                    name: user.displayName,
-                    email: user.email,
-                    provider: "google",
-                    createdAt: serverTimestamp(),
-                    isLoggedIn: true, // << update status login
+            const idToken = await user.getIdToken();
+            await fetch("/api/sessionLogin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify({ idToken, userData: { name: user.displayName, email: user.email } }),
+            });
 
             console.log("LOGIN SUCCESS");
 
-            const idToken = await user.getIdToken();
-            document.cookie = `token=${idToken}; path=/`;
 
         } catch (error: any) {
             if (error.code === "auth/popup-closed-by-user") {

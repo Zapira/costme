@@ -22,17 +22,9 @@ export default function BottomBar() {
 
     const handleLogout = async () => {
         if (confirm('are you sure to logout?')) {
-            const user = auth.currentUser;
-            console.log('user', user)
-            if (user) {
-                const userRef = ref(db, "users/" + user.uid);
-                await set(userRef, { isLoggedIn: false });
-            }
-
-            await signOut(auth);
-            console.log("currentUser:", auth.currentUser);
-
-            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            await fetch("/api/sessionLogout", {
+                method: "POST",
+            });
             router.push("/auth/login");
         }
     }
