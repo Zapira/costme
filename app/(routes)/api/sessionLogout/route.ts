@@ -2,13 +2,35 @@ import { adminAuth, adminDb } from "@/app/_lib/firebaseAdmin";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-    const token = (await cookies()).get("session")?.value;
-    if (!token) return NextResponse.json({ error: "Invalid session cookie" }, { status: 401 });
+export async function POST() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("session")?.value;
+
+    if (!token) {
+        return NextResponse.json({ error: "Invalid session cookie" }, { status: 401 });
+    }
+
     const sessionCookie = await adminAuth.verifySessionCookie(token);
-    if (!sessionCookie) return NextResponse.json({ error: "Invalid session cookie" }, { status: 401 });
+
+    if (!sessionCookie) {
+        return NextResponse.json({ error: "Invalid session cookie" }, { status: 401 });
+    }
+
     await adminAuth.revokeRefreshTokens(sessionCookie.uid);
+
     const userRef = adminDb.ref("users/" + sessionCookie.uid);
     await userRef.update({ isLoggedIn: false });
-    return NextResponse.json({ success: true });
+
+    // 🔥 Hapus cookie
+    const response = NextResponse.json({ success: true });
+
+    response.cookies.set("session", "", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0, // ini yang bikin terhapus
+    });
+
+    return response;
 }

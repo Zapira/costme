@@ -1,26 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "./app/_lib/firebaseAdmin";
 
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
     const token = req.cookies.get("session");
     const { pathname } = req.nextUrl;
 
-    let isAuth = false;
+    const isAuth = !!token;
 
-    console.log(token?.value);
-
-    if (token) {
-        try {
-            await adminAuth.verifySessionCookie(token.value);
-            isAuth = true;
-        } catch (err) {
-            isAuth = false;
-        }
+    if (isAuth && pathname === "/") {
+        return NextResponse.redirect(new URL("/app/home", req.url));
     }
 
-    if (isAuth && pathname === "/") return NextResponse.redirect("/app/home");
-    if (!isAuth && pathname.startsWith("/app")) return NextResponse.redirect("/");
+    if (!isAuth && pathname.startsWith("/app")) {
+        return NextResponse.redirect(new URL("/", req.url));
+    }
 
     return NextResponse.next();
 }
-

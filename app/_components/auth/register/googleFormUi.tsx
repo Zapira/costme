@@ -1,15 +1,13 @@
 "use client";
 
 import { auth } from "@/app/_lib/firebaseAuth";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { serverTimestamp, ref, set } from "firebase/database";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import {  ref, set } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/app/_providers/authProvider";
-
-
 
 export default function GoogleFormUI() {
     const [loading, setLoading] = useState(false);
@@ -37,7 +35,7 @@ export default function GoogleFormUI() {
             });
 
             console.log("LOGIN SUCCESS");
-
+            window.location.href = "/app/home";
 
         } catch (error: any) {
             if (error.code === "auth/popup-closed-by-user") {
