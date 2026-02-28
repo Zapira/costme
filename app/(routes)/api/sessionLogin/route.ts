@@ -3,12 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     try {
-        console.log("ENV DEBUG:", {
-            projectId: process.env.NEXT_PRIVATE_FIREBASE_PROJECT_ID,
-            clientEmail: process.env.NEXT_PRIVATE_FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.NEXT_PRIVATE_FIREBASE_PRIVATE_KEY ? "EXISTS" : "MISSING",
-            databaseURL: process.env.NEXT_PRIVATE_FIREBASE_DATABASE_URL,
-        });
 
         const { idToken, userData } = await req.json();
 

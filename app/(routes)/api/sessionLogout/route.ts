@@ -1,5 +1,3 @@
-export const runtime = "nodejs";
-
 import { getAdminAuth, getAdminDb } from "@/app/_lib/firebaseAdmin";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
