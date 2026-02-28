@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const sessionCookie = await getAdminAuth().createSessionCookie(idToken, { expiresIn: 5 * 24 * 60 * 60 * 1000 });
 
     const res = NextResponse.json({ status: "success" });
-    res.cookies.set("session", sessionCookie, { httpOnly: true, path: "/", secure: true, maxAge: 5 * 24 * 60 * 60 });
+    res.cookies.set("session", sessionCookie, { httpOnly: true, path: "/", secure: true, sameSite: "none", maxAge: 5 * 24 * 60 * 60 });
 
     return res;
 }

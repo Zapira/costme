@@ -28,7 +28,7 @@ export async function POST() {
     response.cookies.set("session", "", {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
         path: "/",
         maxAge: 0, 
     });

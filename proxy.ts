@@ -4,7 +4,7 @@ export function proxy(req: NextRequest) {
     const token = req.cookies.get("session");
     const { pathname } = req.nextUrl;
 
-    const isAuth = !!token;
+    const isAuth = Boolean(token);
 
     if (isAuth && pathname === "/") {
         return NextResponse.redirect(new URL("/app/home", req.url));
