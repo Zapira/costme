@@ -14,40 +14,61 @@ export default function GoogleFormUI() {
     const { user } = useAuth();
 
     const handleLogin = async () => {
-        setLoading(true);
+    setLoading(true);
 
-        try {
-            const provider = new GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: "select_account" });
+    try {
+        console.log("START LOGIN");
 
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            if (!user) return;
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
 
+        console.log("BEFORE POPUP");
+        const result = await signInWithPopup(auth, provider);
+        console.log("AFTER POPUP");
 
-            const idToken = await user.getIdToken();
-            await fetch("/api/sessionLogin", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({ idToken, userData: { name: user.displayName, email: user.email } }),
-            });
-
-            console.log("LOGIN SUCCESS");
-            window.location.href = "/app/home";
-
-        } catch (error: any) {
-            if (error.code === "auth/popup-closed-by-user") {
-                console.log("Popup ditutup user");
-            } else {
-                console.error(error);
-            }
-        } finally {
-            setLoading(false);
+        const user = result.user;
+        if (!user) {
+            console.log("USER NULL");
+            return;
         }
-    };
+
+        console.log("GETTING ID TOKEN");
+        const idToken = await user.getIdToken();
+        console.log("ID TOKEN OK");
+
+        console.log("CALLING API");
+        const response = await fetch("/api/sessionLogin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                idToken,
+                userData: {
+                    name: user.displayName,
+                    email: user.email
+                }
+            }),
+        });
+
+        console.log("API RESPONSE:", response.status);
+
+        if (!response.ok) {
+            const text = await response.text();
+            console.error("API ERROR:", text);
+            return;
+        }
+
+        console.log("LOGIN SUCCESS");
+        window.location.href = "/app/home";
+
+    } catch (error) {
+        console.error("LOGIN ERROR:", error);
+    } finally {
+        setLoading(false);
+    }
+};
 
 
     const handleLogout = async () => {
