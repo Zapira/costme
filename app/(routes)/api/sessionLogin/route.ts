@@ -4,24 +4,50 @@ import { getAdminAuth, getAdminDb } from "@/app/_lib/firebaseAdmin";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const { idToken, userData } = await req.json();
+    try {
+        const { idToken, userData } = await req.json();
 
-    const decodedToken = await getAdminAuth().verifyIdToken(idToken);
-    const uid = decodedToken.uid;
+        console.log("VERIFYING TOKEN");
 
-    await getAdminDb().ref(`users/${uid}`).set({
-        uid,
-        name: userData.name,
-        email: userData.email,
-        provider: "google",
-        createdAt: Date.now(),
-        isLoggedIn: true,
-    });
+        const decodedToken = await getAdminAuth().verifyIdToken(idToken);
+        const uid = decodedToken.uid;
 
-    const sessionCookie = await getAdminAuth().createSessionCookie(idToken, { expiresIn: 5 * 24 * 60 * 60 * 1000 });
+        console.log("WRITING TO DB");
 
-    const res = NextResponse.json({ status: "success" });
-    res.cookies.set("session", sessionCookie, { httpOnly: true, path: "/", secure: true, sameSite: "none", maxAge: 5 * 24 * 60 * 60 });
+        await getAdminDb().ref(`users/${uid}`).set({
+            uid,
+            name: userData.name,
+            email: userData.email,
+            provider: "google",
+            createdAt: Date.now(),
+            isLoggedIn: true,
+        });
 
-    return res;
+        console.log("CREATING SESSION COOKIE");
+
+        const sessionCookie = await getAdminAuth().createSessionCookie(
+            idToken,
+            { expiresIn: 5 * 24 * 60 * 60 * 1000 }
+        );
+
+        const res = NextResponse.json({ status: "success" });
+
+        res.cookies.set("session", sessionCookie, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 5 * 24 * 60 * 60,
+        });
+
+        return res;
+
+    } catch (error: any) {
+        console.error("SESSION LOGIN ERROR:", error);
+
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    }
 }
