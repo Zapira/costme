@@ -31,6 +31,7 @@ export default function GoogleFormUI() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({ idToken, userData: { name: user.displayName, email: user.email } }),
             });
 
