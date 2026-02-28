@@ -43,7 +43,7 @@ export default function BottomBar() {
                         <span className="font-bold text-[10px]">Transaksi</span>
                     </Link>
 
-                    <Link href="/management" className={isActive("/management") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
+                    <Link href="/app/management" className={isActive("/app/management") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
                         <CgMonday size={24} />
                         <span className="font-bold text-[10px]">Manajemen</span>
                     </Link>
