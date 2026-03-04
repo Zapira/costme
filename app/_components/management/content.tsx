@@ -98,6 +98,172 @@ export default function Content() {
             <div>
                 <Title onClick={() => setIsModalOpen(true)}>Dompet saya</Title>
             </div>
+            <div className="mt-4">
+                <div className="border-black border-2 flex flex-col items-center mb-2 bg-linear-to-r from-purple-500 to-pink-500 p-4 rounded-md text-white">
+                    <span className="font-bold text-sm">TOTAL DI SEMUA DOMPET</span>
+                    <span className="text-2xl font-extrabold">Rp 0</span>
+                </div>
+            </div>
+            <div className="mt-5">
+                <div className="flex items-center gap-3">
+                    <h2 className="font-bold text-lg whitespace-nowrap">
+                        Dompet Aktif
+                    </h2>
+                    <div className="flex-1 border-b-2 border-purple-500"></div>
+                </div>
+                <div className="grid grid-cols-1 mt-3 max-h-96 overflow-y-auto">
+                    <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                        <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
+                            💳
+                        </div>
+
+                        <div className="flex flex-col w-full">
+                            <div className="flex justify-between items-center">
+                                <span className="font-semibold text-gray-600 text-sm">
+                                    Saldo Sea Bank
+                                </span>
+                                <span className="text-lg font-extrabold text-gray-900">
+                                    Rp 0
+                                </span>
+                            </div>
+
+                            <div className="mt-3">
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-linear-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: "50%" }}
+                                    ></div>
+                                </div>
+
+                                <div className="flex justify-end mt-1">
+                                    <span className="text-xs text-gray-500">
+                                        50% dari total saldo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                        <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
+                            💳
+                        </div>
+
+                        <div className="flex flex-col w-full">
+                            <div className="flex justify-between items-center">
+                                <span className="font-semibold text-gray-600 text-sm">
+                                    Saldo Sea Bank
+                                </span>
+                                <span className="text-lg font-extrabold text-gray-900">
+                                    Rp 0
+                                </span>
+                            </div>
+
+                            <div className="mt-3">
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-linear-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: "50%" }}
+                                    ></div>
+                                </div>
+
+                                <div className="flex justify-end mt-1">
+                                    <span className="text-xs text-gray-500">
+                                        50% dari total saldo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                        <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
+                            💳
+                        </div>
+
+                        <div className="flex flex-col w-full">
+                            <div className="flex justify-between items-center">
+                                <span className="font-semibold text-gray-600 text-sm">
+                                    Saldo Sea Bank
+                                </span>
+                                <span className="text-lg font-extrabold text-gray-900">
+                                    Rp 0
+                                </span>
+                            </div>
+
+                            <div className="mt-3">
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-linear-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: "50%" }}
+                                    ></div>
+                                </div>
+
+                                <div className="flex justify-end mt-1">
+                                    <span className="text-xs text-gray-500">
+                                        50% dari total saldo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                        <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
+                            💳
+                        </div>
+
+                        <div className="flex flex-col w-full">
+                            <div className="flex justify-between items-center">
+                                <span className="font-semibold text-gray-600 text-sm">
+                                    Saldo Sea Bank
+                                </span>
+                                <span className="text-lg font-extrabold text-gray-900">
+                                    Rp 0
+                                </span>
+                            </div>
+
+                            <div className="mt-3">
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-linear-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: "50%" }}
+                                    ></div>
+                                </div>
+
+                                <div className="flex justify-end mt-1">
+                                    <span className="text-xs text-gray-500">
+                                        50% dari total saldo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="mt-10">
+                <div className="flex items-center gap-3">
+                    <h2 className="font-bold text-lg whitespace-nowrap">
+                        Aksi Cepat
+                    </h2>
+                    <div className="flex-1 border-b-2 border-purple-500"></div>
+                </div>
+                <div className="grid grid-cols-4 gap-3">
+                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                        <span className="text-2xl">💸</span>
+                        <span className="text-sm font-semibold">Transfer</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                        <span className="text-2xl">+</span>
+                        <span className="text-sm font-semibold">Top Up</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                        <span className="text-2xl">🗑️</span>
+                        <span className="text-sm font-semibold">Hapus Dompet</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                        <span className="text-2xl">📊</span>
+                        <span className="text-sm font-semibold">Laporan</span>
+                    </button>
+                </div>
+            </div>
             <Modal titleModal="Fitur Belum Tersedia" isOpen={isModalOpen} setIsOpen={closeModal} >
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
                     <div className="mb-4">
@@ -122,6 +288,5 @@ export default function Content() {
                 </form>
             </Modal>
         </>
-
     )
 }
