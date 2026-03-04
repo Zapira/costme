@@ -35,22 +35,25 @@ export default function Modal({ isOpen, setIsOpen, children, titleModal }: Modal
         <div
             onClick={() => setIsOpen(false)}
             className={`
-                fixed inset-0 z-50 flex justify-center pt-24
-                transition-opacity duration-300 ease-out
-                ${visible ? "opacity-100 bg-black/40 backdrop-blur-sm" : "opacity-0"}
-            `}
+            fixed inset-0 z-50
+            flex justify-center items-start
+            overflow-y-auto
+            p-6
+            transition-opacity duration-300 ease-out
+            ${visible ? "opacity-100 bg-black/40 backdrop-blur-sm" : "opacity-0"}
+        `}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
                 className={`
-                    bg-white w-full max-w-md rounded-xl shadow-xl p-6
-                    transform transition-all duration-300 ease-out max-h-[80vh] overflow-y-auto
-                    ${visible
+                bg-white w-full max-w-md rounded-xl shadow-xl
+                transform transition-all duration-300 ease-out
+                ${visible
                         ? "opacity-100 translate-y-0 scale-100"
                         : "opacity-0 translate-y-4 scale-95"}
-                `}
+            `}
             >
-                <div className="flex items-center justify-between mb-4 border-b pb-2">
+                <div className="flex items-center justify-between border-b p-4">
                     <h2 className="text-xl font-bold">{titleModal}</h2>
                     <button
                         onClick={() => setIsOpen(false)}
@@ -59,8 +62,10 @@ export default function Modal({ isOpen, setIsOpen, children, titleModal }: Modal
                         <FaX size={18} />
                     </button>
                 </div>
-                <div className="mb-4"></div>
-                {children}
+
+                <div className="p-4">
+                    {children}
+                </div>
             </div>
         </div>
     );

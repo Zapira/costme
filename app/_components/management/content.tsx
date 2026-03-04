@@ -143,7 +143,7 @@ export default function Content() {
                             </div>
                         </div>
                     </div>
-                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                    <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
                         <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
                             💳
                         </div>
@@ -174,7 +174,7 @@ export default function Content() {
                             </div>
                         </div>
                     </div>
-                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                    <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
                         <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
                             💳
                         </div>
@@ -205,7 +205,7 @@ export default function Content() {
                             </div>
                         </div>
                     </div>
-                         <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
+                    <div className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
                         <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
                             💳
                         </div>
