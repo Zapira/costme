@@ -1,35 +1,65 @@
 import { useEffect, useState } from "react";
+import { FaX } from "react-icons/fa6";
 
 type ModalProps = {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     children: React.ReactNode;
+    titleModal?: string;
 };
 
-export default function Modal({ isOpen, setIsOpen, children }: ModalProps) {
-    const [show, setShow] = useState(false);
+export default function Modal({ isOpen, setIsOpen, children, titleModal }: ModalProps) {
+    const [render, setRender] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
-            setTimeout(() => setShow(true), 0);
+            setRender(true);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setVisible(true);
+                });
+            });
         } else {
-            setTimeout(() => setShow(false), 200);
+            setVisible(false);
+
+            setTimeout(() => {
+                setRender(false);
+            }, 300);
         }
     }, [isOpen]);
 
-    if (!show) return null;
+    if (!render) return null;
 
     return (
         <div
             onClick={() => setIsOpen(false)}
-            className={`fixed inset-0 z-50 flex justify-center pt-24 transition-all duration-200 ${isOpen ? "bg-black/30 backdrop-blur-sm opacity-100" : "opacity-0"
-                }`}
+            className={`
+                fixed inset-0 z-50 flex justify-center pt-24
+                transition-opacity duration-300 ease-out
+                ${visible ? "opacity-100 bg-black/40 backdrop-blur-sm" : "opacity-0"}
+            `}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`bg-white w-full max-w-md rounded-xl shadow-xl p-6 transform transition-all duration-200 ${isOpen ? "translate-y-0 opacity-100" : "-translate-y-5 opacity-0"
-                    }`}
+                className={`
+                    bg-white w-full max-w-md rounded-xl shadow-xl p-6
+                    transform transition-all duration-300 ease-out max-h-[80vh] overflow-y-auto
+                    ${visible
+                        ? "opacity-100 translate-y-0 scale-100"
+                        : "opacity-0 translate-y-4 scale-95"}
+                `}
             >
+                <div className="flex items-center justify-between mb-4 border-b pb-2">
+                    <h2 className="text-xl font-bold">{titleModal}</h2>
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                        <FaX size={18} />
+                    </button>
+                </div>
+                <div className="mb-4"></div>
                 {children}
             </div>
         </div>
