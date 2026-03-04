@@ -1,4 +1,7 @@
 export interface AuthStateType {
     isLoggedIn: boolean;
-    user: any;
+    user: {
+        uid: string;
+        email: string | null;
+    } | null;
 }
