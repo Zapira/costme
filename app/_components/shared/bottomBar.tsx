@@ -7,10 +7,6 @@ import { CgMonday } from "react-icons/cg";
 import { IoMdExit } from "react-icons/io";
 import { HiHome } from "react-icons/hi2";
 import { useRouter } from "next/navigation";
-import { auth } from "@/app/_lib/firebaseAuth";
-import { signOut } from "firebase/auth";
-import { db } from "@/app/_lib/firebaseDb";
-import { ref, set } from "firebase/database";
 
 export default function BottomBar() {
     const pathname = usePathname();

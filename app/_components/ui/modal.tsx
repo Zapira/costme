@@ -14,14 +14,16 @@ export default function Modal({ isOpen, setIsOpen, children, titleModal }: Modal
 
     useEffect(() => {
         if (isOpen) {
-            setRender(true);
             requestAnimationFrame(() => {
+                setRender(true);
                 requestAnimationFrame(() => {
                     setVisible(true);
                 });
             });
         } else {
-            setVisible(false);
+            requestAnimationFrame(() => {
+                setVisible(false);
+            });
 
             setTimeout(() => {
                 setRender(false);

@@ -7,7 +7,7 @@ import { get, onValue, push, ref, set } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { auth } from "@/app/_lib/firebaseAuth";
 import Swal from "sweetalert2";
-import { WalletType } from "@/app/_types/walletType";
+import { ExpenseData, IncomeData, TransferData, WalletType } from "@/app/_types/walletType";
 import { onAuthStateChanged } from "firebase/auth";
 import { UserType } from "@/app/_types/authSliceType";
 import { FaTrash } from "react-icons/fa";
@@ -15,6 +15,9 @@ import { FaTrash } from "react-icons/fa";
 
 export default function Content() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+    const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+    const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
     const [isActiveWallet, setIsActiveWallet] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<UserType>();
@@ -27,6 +30,13 @@ export default function Content() {
             name: '',
             balance: 0,
         }
+    });
+
+    const { register: registerTransfer, handleSubmit: handleSubmitTransfer, formState: { errors: transferErrors }, reset: resetTransfer } = useForm<TransferData>({
+    });
+    const { register: registerIncome, handleSubmit: handleSubmitIncome, formState: { errors: incomeErrors }, reset: resetIncome } = useForm<IncomeData>({
+    });
+    const { register: registerExpense, handleSubmit: handleSubmitExpense, formState: { errors: expenseErrors }, reset: resetExpense } = useForm<ExpenseData>({
     });
 
     const handleWalletClick = (index: number) => {
@@ -163,7 +173,38 @@ export default function Content() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await set(ref(db, `users/${user?.uid}/wallets/${walletId}`), null);
+                    const walletRef = ref(db, `users/${user?.uid}/wallets/${walletId}`);
+                    const walletSnapshot = await get(walletRef);
+                    if (walletSnapshot.exists()) {
+                        const walletBalance = walletSnapshot.val().balance;
+                        const totalBalanceRef = ref(db, `users/${user?.uid}/totalBalance`);
+                        const totalBalanceSnapshot = await get(totalBalanceRef);
+                        const currentTotalBalance = totalBalanceSnapshot.exists() ? totalBalanceSnapshot.val() : 0;
+                        await set(totalBalanceRef, currentTotalBalance - walletBalance);
+                    }
+
+                    const historyRef = ref(db, `users/${user?.uid}/history`);
+                    const newHistoryRef = push(historyRef);
+                    await set(newHistoryRef, {
+                        type: 'delete',
+                        amount: walletSnapshot.exists() ? walletSnapshot.val().balance : 0,
+                        walletId: walletId,
+                        nameWallet: walletSnapshot.exists() ? walletSnapshot.val().name : 'Unknown',
+                        timestamp: new Intl.DateTimeFormat('id-ID', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZone: 'UTC'
+                        }).format(new Date())
+                    });
+
+                    if (walletSnapshot.exists()) {
+
+                        await set(walletRef, null);
+                    }
                     Swal.fire(
                         'Terhapus!',
                         'Dompet Anda telah dihapus.',
@@ -180,6 +221,234 @@ export default function Content() {
             }
         });
     }
+
+    const handleTransfer = async (data: TransferData) => {
+        try {
+            console.log(data);
+            const removeCommaAmount = Number(data.balance.toString().replace(/,/g, ''));
+            const sourceWalletRef = ref(db, `users/${user?.uid}/wallets/${data.sourceWalletId}`);
+            const destinationWalletRef = ref(db, `users/${user?.uid}/wallets/${data.destinationWalletId}`);
+
+            const sourceWalletSnapshot = await get(sourceWalletRef);
+            const destinationWalletSnapshot = await get(destinationWalletRef);
+
+            if (!sourceWalletSnapshot.exists() || !destinationWalletSnapshot.exists()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dompet Tidak Ditemukan',
+                    text: 'Pastikan dompet sumber dan tujuan valid',
+                });
+                return;
+            }
+
+            if (data.sourceWalletId === data.destinationWalletId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dompet Sama',
+                    text: 'Dompet sumber dan tujuan tidak boleh sama',
+                });
+                return;
+            }
+
+            const sourceBalance = sourceWalletSnapshot.val().balance;
+            const destinationBalance = destinationWalletSnapshot.val().balance;
+
+            if (removeCommaAmount > sourceBalance) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Saldo Tidak Cukup',
+                    text: 'Pastikan saldo di dompet sumber mencukupi untuk transfer',
+                });
+                return;
+            }
+
+            await set(sourceWalletRef, {
+                ...sourceWalletSnapshot.val(),
+                balance: sourceBalance - removeCommaAmount
+            });
+
+            await set(destinationWalletRef, {
+                ...destinationWalletSnapshot.val(),
+                balance: destinationBalance + removeCommaAmount
+            });
+
+            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const newHistoryRef = push(historyRef);
+            await set(newHistoryRef, {
+                type: 'transfer',
+                amount: removeCommaAmount,
+                sourceWalletId: data.sourceWalletId,
+                destinationWalletId: data.destinationWalletId,
+                timestamp: new Intl.DateTimeFormat('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'UTC'
+                }).format(new Date())
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Transfer Berhasil',
+                text: 'Dana telah berhasil ditransfer antar dompet',
+            }).then(() => {
+                setIsTransferModalOpen(false);
+            });
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Transfer Gagal',
+                text: 'Terjadi kesalahan saat melakukan transfer',
+            });
+        }
+    }
+
+    const handleIncome = async (data: IncomeData) => {
+        try {
+            const removeCommaAmount = Number(data.balance.toString().replace(/,/g, ''));
+            const walletRef = ref(db, `users/${user?.uid}/wallets/${data.walletId}`);
+            const totalWalletBalanceRef = ref(db, `users/${user?.uid}/totalBalance`);
+            const walletSnapshot = await get(walletRef);
+
+            if (!walletSnapshot.exists()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dompet Tidak Ditemukan',
+                    text: 'Pastikan dompet valid',
+                });
+                return;
+            }
+
+            const currentBalance = walletSnapshot.val().balance;
+
+            await set(walletRef, {
+                ...walletSnapshot.val(),
+                balance: currentBalance + removeCommaAmount
+            });
+
+            const totalBalanceSnapshot = await get(totalWalletBalanceRef);
+            const newTotalBalance = (totalBalanceSnapshot.val() || 0) + removeCommaAmount;
+            await set(totalWalletBalanceRef, newTotalBalance);
+
+            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const newHistoryRef = push(historyRef);
+            await set(newHistoryRef, {
+                type: 'income',
+                amount: removeCommaAmount,
+                walletId: data.walletId,
+                timestamp: new Intl.DateTimeFormat('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'UTC'
+                }).format(new Date())
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Pemasukan Berhasil',
+                text: 'Dana telah berhasil ditambahkan ke dompet',
+            }).then(() => {
+                setIsIncomeModalOpen(false);
+            });
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Pemasukan Gagal',
+                text: 'Terjadi kesalahan saat menambahkan pemasukan',
+            });
+        }
+    }
+
+    const expenseCategories = [
+        { id: 1, name: 'Makanan' },
+        { id: 2, name: 'Transportasi' },
+        { id: 3, name: 'Hiburan' },
+        { id: 4, name: 'Belanja' },
+        { id: 5, name: 'Tagihan' },
+        { id: 6, name: 'Kesehatan' },
+        { id: 7, name: 'Pendidikan' },
+        { id: 8, name: 'Lainnya' }
+    ];
+
+    const handleExpense = async (data: ExpenseData) => {
+        try {
+            console.log(data);
+            const removeCommaAmount = Number(data.balance.toString().replace(/,/g, ''));
+            const walletRef = ref(db, `users/${user?.uid}/wallets/${data.walletId}`);
+            const totalWalletBalanceRef = ref(db, `users/${user?.uid}/totalBalance`);
+            const walletSnapshot = await get(walletRef);
+            if (!walletSnapshot.exists()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dompet Tidak Ditemukan',
+                    text: 'Pastikan dompet valid',
+                });
+                return;
+            }
+
+            const currentBalance = walletSnapshot.val().balance;
+
+            if (removeCommaAmount > currentBalance) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Saldo Tidak Cukup',
+                    text: 'Pastikan saldo di dompet mencukupi untuk pengeluaran',
+                });
+                return;
+            }
+
+            await set(walletRef, {
+                ...walletSnapshot.val(),
+                balance: currentBalance - removeCommaAmount
+            });
+
+            const totalBalanceSnapshot = await get(totalWalletBalanceRef);
+            const newTotalBalance = (totalBalanceSnapshot.val() || 0) - removeCommaAmount;
+            await set(totalWalletBalanceRef, newTotalBalance);
+
+            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const newHistoryRef = push(historyRef);
+            await set(newHistoryRef, {
+                type: 'expense',
+                amount: removeCommaAmount,
+                walletId: data.walletId,
+                expenseCategoryId: data.expenseCategoryId,
+                timestamp: new Intl.DateTimeFormat('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'UTC'
+                }).format(new Date())
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Pengeluaran Berhasil',
+                text: 'Dana telah berhasil dikurangkan dari dompet',
+            }).then(() => {
+                setIsExpenseModalOpen(false);
+            });
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Pengeluaran Gagal',
+                text: 'Terjadi kesalahan saat menambahkan pengeluaran',
+            });
+        }
+     }
 
     return (
         <>
@@ -270,27 +539,37 @@ export default function Content() {
                     <div className="flex-1 border-b-2 border-purple-500"></div>
                 </div>
                 <div className="grid grid-cols-4 gap-3">
-                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                    <button onClick={() => setIsTransferModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
                         <span className="text-2xl">💸</span>
                         <span className="text-sm font-semibold">Transfer</span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
+                    <button onClick={() => setIsIncomeModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
                         <span className="text-2xl">+</span>
-                        <span className="text-sm font-semibold">Top Up</span>
+                        <span className="text-sm font-semibold">Pemasukan</span>
                     </button>
-                    <button onClick={() => {
-                        setIsDelete(true);
-                    }} className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
-                        <span className="text-2xl">🗑️</span>
-                        <span className="text-sm font-semibold">Hapus Dompet</span>
+                    <button onClick={() => setIsExpenseModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
+                        <span className="text-2xl">-</span>
+                        <span className="text-sm font-semibold">Pengeluaran</span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 border rounded-md bg-white shadow-sm hover:bg-gray-100 transition-colors">
-                        <span className="text-2xl">📊</span>
-                        <span className="text-sm font-semibold">Laporan</span>
-                    </button>
+                    {isDelete ? (
+                        <button onClick={() => {
+                            setIsDelete(false);
+                        }} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
+                            <span className="text-2xl">❌</span>
+                            <span className="text-sm font-semibold">Batal</span>
+                        </button>
+                    ) : (
+                        <button onClick={() => {
+                            setIsDelete(true);
+                        }} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
+                            <span className="text-2xl">🗑️</span>
+                            <span className="text-sm font-semibold">Hapus Dompet</span>
+                        </button>
+                    )}
                 </div>
             </div>
-            <Modal titleModal="Fitur Belum Tersedia" isOpen={isModalOpen} setIsOpen={closeModal} >
+            {/* Modal Tambah Dompet */}
+            <Modal titleModal="Tambah Dompet" isOpen={isModalOpen} setIsOpen={closeModal} >
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
                     <div className="mb-4">
                         <label htmlFor="">Nama Dompet</label>
@@ -309,6 +588,84 @@ export default function Content() {
                                 </button>
                             ))}
                         </div>
+                    </div>
+                    <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
+                </form>
+            </Modal>
+
+            {/* Modal Transfer */}
+            <Modal titleModal="Transfer Antar Dompet" isOpen={isTransferModalOpen} setIsOpen={setIsTransferModalOpen} >
+                <form onSubmit={handleSubmitTransfer(handleTransfer, onError)} className="p-4">
+                    <div className="mb-4">
+                        <label htmlFor="">Sumber Dana</label>
+                        <select className={`w-full border rounded-md p-2 mt-1 ${transferErrors.sourceWalletId ? 'border-red-500' : 'border-purple-500'}`} {...registerTransfer("sourceWalletId", { required: true })}>
+                            <option value="">Pilih dompet sumber</option>
+                            {wallets.map((wallet) => (
+                                <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Tujuan Dana</label>
+                        <select className={`w-full border rounded-md p-2 mt-1 ${transferErrors.destinationWalletId ? 'border-red-500' : 'border-purple-500'}`} {...registerTransfer("destinationWalletId", { required: true })}>
+                            <option value="">Pilih dompet tujuan</option>
+                            {wallets.map((wallet) => (
+                                <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Jumlah Transfer</label>
+                        <input type="text" {...registerTransfer("balance", { required: true, onChange: handleOnlyNumber })} className={`w-full border rounded-md p-2 mt-1 ${transferErrors.balance ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan jumlah transfer" />
+                    </div>
+                    <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
+                </form>
+            </Modal>
+
+            {/* Modal Pemasukan */}
+            <Modal titleModal="Tambah Pemasukan" isOpen={isIncomeModalOpen} setIsOpen={setIsIncomeModalOpen} >
+                <form onSubmit={handleSubmitIncome(handleIncome, onError)} className="p-4">
+                    <div className="mb-4">
+                        <label htmlFor="">Sumber Dana</label>
+                        <select className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.walletId ? 'border-red-500' : 'border-purple-500'}`} {...registerIncome("walletId", { required: true })}>
+                            <option value="">Pilih dompet sumber</option>
+                            {wallets.map((wallet) => (
+                                <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Jumlah Pemasukan</label>
+                        <input type="text" {...registerIncome("balance", { required: true, onChange: handleOnlyNumber })} className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.balance ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan jumlah pemasukan" />
+                    </div>
+                    <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
+                </form>
+            </Modal>
+
+            {/* Modal Pengeluaran */}
+            <Modal titleModal="Tambah Pengeluaran" isOpen={isExpenseModalOpen} setIsOpen={setIsExpenseModalOpen} >
+                <form onSubmit={handleSubmitExpense(handleExpense, onError)} className="p-4">
+                    <div className="mb-4">
+                        <label htmlFor="">Sumber Dana</label>
+                        <select className={`w-full border rounded-md p-2 mt-1 ${expenseErrors.walletId ? 'border-red-500' : 'border-purple-500'}`} {...registerExpense("walletId", { required: true })}>
+                            <option value="">Pilih dompet sumber</option>
+                            {wallets.map((wallet) => (
+                                <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Jumlah Pengeluaran</label>
+                        <input type="text" {...registerExpense("balance", { required: true, onChange: handleOnlyNumber })} className={`w-full border rounded-md p-2 mt-1 ${expenseErrors.balance ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan jumlah pengeluaran" />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Tujuan</label>
+                        <select className={`w-full border rounded-md p-2 mt-1 ${expenseErrors.expenseCategoryId ? 'border-red-500' : 'border-purple-500'}`} {...registerExpense("expenseCategoryId", { required: true })}>
+                            <option value="">Pilih kategori pengeluaran</option>
+                            {expenseCategories.map((category) => (
+                                <option key={category.id} value={category.id}>{category.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
                 </form>
