@@ -21,3 +21,12 @@ export interface ExpenseData {
     balance: number;
     expenseCategoryId: string;
 }
+
+export interface historyData {
+    expenseCategoryId: string;
+    amount: number;
+    type: string;
+    timestamp: string;
+    walletId: string;
+    walletName?: string;
+}
