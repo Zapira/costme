@@ -442,7 +442,7 @@ export default function Content() {
                 text: 'Terjadi kesalahan saat menambahkan pengeluaran',
             });
         }
-     }
+    }
 
     return (
         <>
@@ -525,15 +525,15 @@ export default function Content() {
                     )
                 )}
             </div>
-            <div className="mt-10">
+            <div className="mt-10 mb-20">
                 <div className="flex items-center gap-3">
                     <h2 className="font-bold text-lg whitespace-nowrap">
                         Aksi Cepat
                     </h2>
                     <div className="flex-1 border-b-2 border-purple-500"></div>
                 </div>
-                <div className="grid grid-cols-4 gap-3">
-                    <button onClick={() => setIsTransferModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onClick={() => setIsTransferModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex  items-center justify-center gap-2">
                         <span className="text-2xl">💸</span>
                         <span className="text-sm font-semibold">Transfer</span>
                     </button>
