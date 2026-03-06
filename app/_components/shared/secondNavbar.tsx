@@ -1,12 +1,14 @@
 'use client';
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaHamburger } from "react-icons/fa";
 import { FaUser, FaX } from "react-icons/fa6";
 
 export default function SecondNavbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const pathname = usePathname();
 
     return (
         <>
@@ -25,7 +27,7 @@ export default function SecondNavbar() {
                     {isOpen ? (
                         <FaX size={24} strokeWidth={3} className="text-slate-900" />
                     ) : (
-                        <FaHamburger size={24} strokeWidth={3} className="text-slate-900" />
+                        <FaHamburger size={24} strokeWidth={3} className="text-orange-600" />
                     )}
                 </button>
             </nav>
@@ -36,21 +38,26 @@ export default function SecondNavbar() {
             >
                 <nav className="p-5">
                     <ul className="flex flex-col gap-3">
-                        <li>
-                            <Link href="/login">
-                                <button className="w-full px-5 py-3 bg-white border-[3px] border-slate-900 rounded-xl text-sm font-bold text-slate-900 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all flex items-center justify-center gap-2">
-                                    <FaUser size={18} strokeWidth={3} />
-                                    <span>Masuk</span>
-                                </button>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/register">
-                                <button className="w-full px-5 py-3 bg-gradient-to-br from-violet-500 to-purple-600 border-[3px] border-slate-900 rounded-xl text-sm font-bold text-white shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all">
-                                    Daftar Gratis
-                                </button>
-                            </Link>
-                        </li>
+                        {pathname === "/auth/login" ? (
+                            <li>
+                                <Link href="/">
+                                    <button className="w-full px-5 py-3 bg-white border-[3px] border-slate-900 rounded-xl text-sm font-bold text-slate-900 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all flex items-center justify-center gap-2">
+                                        <FaUser size={18} strokeWidth={3} />
+                                        <span>Beranda</span>
+                                    </button>
+                                </Link>
+                            </li>
+                        ) : (
+                            <li>
+                                <Link href="/auth/login">
+                                    <button className="w-full px-5 py-3 bg-white border-[3px] border-slate-900 rounded-xl text-sm font-bold text-slate-900 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all flex items-center justify-center gap-2">
+                                        <FaUser size={18} strokeWidth={3} />
+                                        <span>Daftar/Login</span>
+                                    </button>
+                                </Link>
+                            </li>
+                        )}
+
                     </ul>
                 </nav>
             </div>
