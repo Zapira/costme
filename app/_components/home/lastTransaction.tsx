@@ -18,43 +18,30 @@ export default function LastTransaction() {
 
             setLoading(true);
 
-            const historyRef = ref(db, `users/${uid}/history`);
-            const snapshot = await get(historyRef);
+            const [incomeSnapshot, expenseSnapshot] = await Promise.all([
+                get(ref(db, `users/${uid}/history-income`)),
+                get(ref(db, `users/${uid}/history-expense`))
+            ]);
 
-            if (!snapshot.exists()) {
+            const incomeData = incomeSnapshot.val();
+            const expenseData = expenseSnapshot.val();
+
+
+            if (!incomeSnapshot.exists() && !expenseSnapshot.exists()) {
                 setData([]);
                 setLoading(false);
                 return;
             }
 
-            const historyData = snapshot.val();
+            const historyData = { ...incomeData, ...expenseData };
 
-            const filteredData: historyData[] = (Object.values(historyData) as historyData[])
-                .filter((item: historyData) =>
-                    item?.type === "income" || item?.type === "expense"
-                );
 
-            const sortedData = filteredData.sort(
-                (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            const sortedData = (Object.values(historyData) as historyData[]).sort(
+                (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
             );
 
-            const walletNamesRef = ref(db, `users/${uid}/wallets`);
-            const walletNamesSnapshot = await get(walletNamesRef);
-            const walletNamesData = walletNamesSnapshot.val();
-
-            const enrichedData = sortedData.map((item) => {
-
-                const walletName =
-                    walletNamesData?.[item.walletId]?.name || "Unknown Wallet";
-
-                return {
-                    ...item,
-                    walletName,
-                    amount: Number(item.amount) || 0
-                };
-            });
-
-            setData(enrichedData);
+            console.log("Sorted History Data:", sortedData);
+            setData(sortedData);
             setLoading(false);
 
         } catch (error) {
@@ -133,24 +120,25 @@ export default function LastTransaction() {
                             className="bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)]  mt-3"
                         >
                             <div className="flex items-center gap-3">
-                                {/* Icon */}
                                 <div
                                     className={`w-12 h-12 ${item.type === 'income' ? 'bg-emerald-100' : 'bg-rose-100'} border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0`}
                                 >
                                     {item.type === 'income' ? '📈' : '💸'}
                                 </div>
 
-                                {/* Content */}
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-bold text-slate-900 truncate">
                                         {categoryName}
                                     </p>
                                     <p className="text-xs text-slate-500 font-semibold">
-                                        {item.walletName} • {item.timestamp}
+                                        {item.walletName} • {new Date(item.timestamp).toLocaleDateString('id-ID', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })}
                                     </p>
                                 </div>
 
-                                {/* Amount */}
                                 <span
                                     className={`text-base font-black whitespace-nowrap ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}
                                 >

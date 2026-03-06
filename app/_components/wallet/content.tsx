@@ -87,21 +87,15 @@ export default function Content() {
             const currentTotalBalance = totalBalanceSnapshot.exists() ? totalBalanceSnapshot.val() : 0;
             await set(totalBalance, currentTotalBalance + removeCommaBalance);
 
-            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const historyRef = ref(db, `users/${user?.uid}/history-income`);
             const newHistoryRef = push(historyRef);
             await set(newHistoryRef, {
                 type: 'income',
                 amount: removeCommaBalance,
                 walletId: response.key,
-                timestamp: new Intl.DateTimeFormat('id-ID', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: 'UTC'
-                }).format(new Date())
+                timestamp: new Date().getTime(),
+                description: 'Pemasukan awal untuk dompet ' + data.name,
+                walletName: data.name
             });
 
             if (response) {
@@ -201,22 +195,15 @@ export default function Content() {
                         await set(totalBalanceRef, currentTotalBalance - walletBalance);
                     }
 
-                    const historyRef = ref(db, `users/${user?.uid}/history`);
+                    const historyRef = ref(db, `users/${user?.uid}/history-delete`);
                     const newHistoryRef = push(historyRef);
                     await set(newHistoryRef, {
                         type: 'delete',
                         amount: walletSnapshot.exists() ? walletSnapshot.val().balance : 0,
                         walletId: walletId,
-                        nameWallet: walletSnapshot.exists() ? walletSnapshot.val().name : 'Unknown',
-                        timestamp: new Intl.DateTimeFormat('id-ID', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            timeZone: 'UTC'
-                        }).format(new Date())
+                        timestamp: new Date().getTime(),
+                        walletName: walletSnapshot.exists() ? walletSnapshot.val().name : 'Unknown Wallet',
+                        description: 'Penghapusan dompet ' + (walletSnapshot.exists() ? walletSnapshot.val().name : 'Unknown Wallet')
                     });
 
                     if (walletSnapshot.exists()) {
@@ -290,22 +277,40 @@ export default function Content() {
                 balance: destinationBalance + removeCommaAmount
             });
 
-            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const historyRef = ref(db, `users/${user?.uid}/history-transfer`);
             const newHistoryRef = push(historyRef);
             await set(newHistoryRef, {
                 type: 'transfer',
                 amount: removeCommaAmount,
                 sourceWalletId: data.sourceWalletId,
                 destinationWalletId: data.destinationWalletId,
-                timestamp: new Intl.DateTimeFormat('id-ID', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: 'UTC'
-                }).format(new Date())
+                timestamp: new Date().getTime(),
+                description: 'Transfer dari ' + sourceWalletSnapshot.val().name + ' ke ' + destinationWalletSnapshot.val().name,
+                sourceWalletName: sourceWalletSnapshot.val().name,
+                destinationWalletName: destinationWalletSnapshot.val().name
+            });
+
+            const historyIncomeRef = ref(db, `users/${user?.uid}/history-income`);
+            const newHistoryIncomeRef = push(historyIncomeRef);
+            await set(newHistoryIncomeRef, {
+                type: 'income',
+                amount: removeCommaAmount,
+                walletId: data.destinationWalletId,
+                timestamp: new Date().getTime(),
+                description: 'Transfer dari ' + sourceWalletSnapshot.val().name,
+                walletName: destinationWalletSnapshot.val().name
+            });
+
+            const historyExpenseRef = ref(db, `users/${user?.uid}/history-expense`);
+            const newHistoryExpenseRef = push(historyExpenseRef);
+            await set(newHistoryExpenseRef, {
+                type: 'expense',
+                amount: removeCommaAmount,
+                walletId: data.sourceWalletId,
+                expenseCategoryId: '8',
+                timestamp: new Date().getTime(),
+                description: 'Transfer ke ' + destinationWalletSnapshot.val().name,
+                walletName: sourceWalletSnapshot.val().name
             });
 
             Swal.fire({
@@ -345,7 +350,8 @@ export default function Content() {
 
             await set(walletRef, {
                 ...walletSnapshot.val(),
-                balance: currentBalance + removeCommaAmount
+                balance: currentBalance + removeCommaAmount,
+                description: data.description
             });
 
             const totalBalanceSnapshot = await get(totalWalletBalanceRef);
@@ -358,16 +364,11 @@ export default function Content() {
                 type: 'income',
                 amount: removeCommaAmount,
                 walletId: data.walletId,
-                timestamp: new Intl.DateTimeFormat('id-ID', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: 'UTC'
-                }).format(new Date())
+                timestamp: new Date().getTime(),
+                description: data.description,
+                walletName: walletSnapshot.val().name
             });
+
 
             Swal.fire({
                 icon: 'success',
@@ -426,7 +427,8 @@ export default function Content() {
 
             await set(walletRef, {
                 ...walletSnapshot.val(),
-                balance: currentBalance - removeCommaAmount
+                balance: currentBalance - removeCommaAmount,
+                description: data.description
             });
 
             const totalBalanceSnapshot = await get(totalWalletBalanceRef);
@@ -440,9 +442,9 @@ export default function Content() {
                 amount: removeCommaAmount,
                 walletId: data.walletId,
                 expenseCategoryId: data.expenseCategoryId,
-                timestamp: new Intl.DateTimeFormat('id-ID', {
-                    timeZone: 'UTC'
-                }).format(new Date())
+                timestamp: new Date().getTime(),
+                description: data.description,
+                walletName: walletSnapshot.val().name
             });
 
             Swal.fire({
@@ -593,7 +595,7 @@ export default function Content() {
                     )}
                 </div>
             </div>
-            
+
             {/* Modal Tambah Dompet */}
             <Modal titleModal="Tambah Dompet" isOpen={isModalOpen} setIsOpen={closeModal} >
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
@@ -664,6 +666,10 @@ export default function Content() {
                         <label htmlFor="">Jumlah Pemasukan</label>
                         <input type="text" {...registerIncome("balance", { required: true, onChange: handleOnlyNumber })} className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.balance ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan jumlah pemasukan" />
                     </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Keterangan</label>
+                        <input type="text" {...registerIncome("description", { required: true })} className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.description ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan keterangan" />
+                    </div>
                     <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
                 </form>
             </Modal>
@@ -692,6 +698,10 @@ export default function Content() {
                                 <option key={category.id} value={category.id}>{category.name}</option>
                             ))}
                         </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="">Keterangan</label>
+                        <input type="text" {...registerIncome("description", { required: true })} className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.description ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan keterangan" />
                     </div>
                     <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
                 </form>
