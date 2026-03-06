@@ -1,26 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function proxy(req: NextRequest) {
-
-    const token = req.cookies.get("session")?.value;
     const { pathname } = req.nextUrl;
 
-    if (!token) {
+    // ambil cookie session
+    const token = req.cookies.get("session")?.value;
 
-        if (pathname.startsWith("/app")) {
-            return NextResponse.redirect(new URL("/", req.url));
-        }
+    // validasi token
+    const isAuth =
+        token &&
+        token !== "undefined" &&
+        token !== "null" &&
+        token.trim() !== "";
 
-        return NextResponse.next();
+    // jika belum login tapi akses halaman app
+    if (!isAuth && pathname.startsWith("/app")) {
+        return NextResponse.redirect(new URL("/", req.url));
     }
 
-    if (token && pathname === "/") {
+    // jika sudah login tapi masih di halaman login
+    if (isAuth && pathname === "/") {
         return NextResponse.redirect(new URL("/app/home", req.url));
     }
 
     return NextResponse.next();
 }
 
+// route yang diproteksi proxy
 export const config = {
-    matcher: ["/", "/app/:path*"],
+    matcher: [
+        "/",
+        "/app/:path*"
+    ],
 };
