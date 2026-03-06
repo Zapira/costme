@@ -39,7 +39,7 @@ export default function BottomBar() {
                         <span className="font-bold text-[10px]">Dompet</span>
                     </Link>
 
-                    <Link href="/history" className={isActive("/history") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
+                    <Link href="/app/history" className={isActive("/app/history") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
                         <BiTrendingUp size={24} />
                         <span className="font-bold text-[10px]">History</span>
                     </Link>
