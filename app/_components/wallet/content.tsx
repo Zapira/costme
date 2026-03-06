@@ -86,6 +86,24 @@ export default function Content() {
             const totalBalanceSnapshot = await get(totalBalance);
             const currentTotalBalance = totalBalanceSnapshot.exists() ? totalBalanceSnapshot.val() : 0;
             await set(totalBalance, currentTotalBalance + removeCommaBalance);
+
+            const historyRef = ref(db, `users/${user?.uid}/history`);
+            const newHistoryRef = push(historyRef);
+            await set(newHistoryRef, {
+                type: 'income',
+                amount: removeCommaBalance,
+                walletId: response.key,
+                timestamp: new Intl.DateTimeFormat('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'UTC'
+                }).format(new Date())
+            });
+
             if (response) {
                 Swal.fire({
                     icon: 'success',
@@ -449,119 +467,133 @@ export default function Content() {
             <div>
                 <Title onClick={() => setIsModalOpen(true)}>Dompet saya</Title>
             </div>
-            <div className="mt-4">
-                <div className="border-black border-2 flex flex-col items-center mb-2 bg-linear-to-r from-purple-500 to-pink-500 p-4 rounded-md text-white">
-                    <span className="font-bold text-sm">TOTAL DI SEMUA DOMPET</span>
-                    <span className="text-2xl font-extrabold">Rp {totalBalance.toLocaleString('id-ID')}</span>
+
+            {/* Total Balance Card */}
+            <div className="mt-4 pr-2">
+                <div className="bg-linear-to-br from-cyan-400 to-teal-500 border-[3px] border-slate-900 rounded-3xl p-7 shadow-[6px_6px_0_0_rgb(15,23,42)] text-center relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                    <span className="text-sm font-bold text-white/90 uppercase tracking-wider block mb-2 relative z-10">Total di Semua Dompet</span>
+                    <span className="text-4xl font-black text-white drop-shadow-lg relative z-10">Rp {totalBalance.toLocaleString('id-ID')}</span>
                 </div>
             </div>
-            <div className="mt-5">
-                <div className="flex items-center gap-3">
-                    <h2 className="font-bold text-lg whitespace-nowrap">
-                        Dompet Aktif
-                    </h2>
-                    <div className="flex-1 border-b-2 border-purple-500"></div>
-                </div>
+
+            {/* Dompet Aktif Section */}
+            <div className="mt-6">
+                <h2 className="text-lg font-black text-slate-900 mb-4">
+                    Dompet Aktif ({wallets.length})
+                </h2>
+
                 {loading ? (
                     <div className="w-full h-48 flex items-center justify-center">
-                        <span className="text-gray-500">Loading...</span>
+                        <span className="text-slate-500 font-semibold">Loading...</span>
+                    </div>
+                ) : wallets.length === 0 ? (
+                    <div className="w-full h-48 flex items-center justify-center">
+                        <span className="text-slate-500 font-semibold">Belum ada dompet aktif</span>
                     </div>
                 ) : (
-                    wallets.length === 0 ? (
-                        <div className="w-full h-48 flex items-center justify-center">
-                            <span className="text-gray-500">Belum ada dompet aktif</span>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 mt-3 max-h-96 overflow-y-auto">
-                            {wallets.map((wallet, index) => (
-                                <div key={index} className="border border-gray-200 shadow-sm flex items-start gap-4 mb-3 p-4 rounded-xl bg-white">
-                                    <div className="text-2xl rounded-lg bg-yellow-400 p-3 flex items-center justify-center">
+                    <div className="space-y-3  overflow-y-auto pr-2 pb-2">
+                        {wallets.map((wallet, index) => (
+                            <div
+                                key={index}
+                                className="bg-white border-[3px] border-slate-900 rounded-2xl p-5 shadow-[6px_6px_0_0_rgb(15,23,42)] "
+                            >
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-14 h-14 bg-amber-400 border-[3px] border-slate-900 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 shadow-[3px_3px_0_0_rgb(15,23,42)]">
                                         {walletIcons[wallet.icon || 0]}
                                     </div>
-
-                                    <div className="flex flex-col w-full">
-                                        <div className="flex justify-between items-center">
-                                            <span className="font-semibold text-gray-600 text-sm">
-                                                {wallet.name}
-                                            </span>
-                                            <span className="text-lg font-extrabold text-gray-900">
-                                                Rp {wallet.balance.toLocaleString('id-ID')}
-                                            </span>
-                                        </div>
-
-                                        <div className="mt-3">
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                                <div
-                                                    className="bg-linear-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-                                                    style={{
-                                                        width: `${Math.min(
-                                                            (Number(wallet.balance) / 1000000) * 100,
-                                                            100
-                                                        )}%`
-                                                    }}
-                                                ></div>
-                                            </div>
-
-                                            <div className="flex justify-end mt-1">
-                                                <span className="text-xs text-gray-500">
-                                                    {Math.round((wallet.balance / 1000000) * 100)}% dari total saldo
-                                                </span>
-                                            </div>
-                                        </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-bold text-slate-600 mb-1">Saldo {wallet.name}</p>
+                                        <p className="text-2xl font-black text-slate-900">Rp {wallet.balance.toLocaleString('id-ID')}</p>
                                     </div>
                                     {isDelete && (
-                                        <div className="ml-2">
-                                            <button onClick={() => {
-                                                handleDeleteWallet(wallet.id);
-                                            }}>
-                                                <FaTrash className="text-red-500 hover:text-red-700 cursor-pointer" />
-                                            </button>
-                                        </div>
+                                        <button
+                                            onClick={() => handleDeleteWallet(wallet.id)}
+                                            className="w-10 h-10 bg-rose-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center "
+                                        >
+                                            <FaTrash className="text-rose-600" size={16} />
+                                        </button>
                                     )}
                                 </div>
 
-                            ))}
-                        </div>
-                    )
+                                {/* Progress Bar */}
+                                <div className="relative">
+                                    <div className="w-full h-2 bg-slate-100 rounded-full border-[2px] border-slate-900 overflow-hidden">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min((Number(wallet.balance) / totalBalance) * 100, 100)}%` }}
+                                        ></div>
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-600 mt-1.5 block">
+                                        {Math.round((wallet.balance / totalBalance) * 100)}% dari total saldo
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
+
+            {/* Aksi Cepat Section */}
             <div className="mt-10 mb-20">
-                <div className="flex items-center gap-3">
-                    <h2 className="font-bold text-lg whitespace-nowrap">
-                        Aksi Cepat
-                    </h2>
-                    <div className="flex-1 border-b-2 border-purple-500"></div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                    <button onClick={() => setIsTransferModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex  items-center justify-center gap-2">
-                        <span className="text-2xl">💸</span>
-                        <span className="text-sm font-semibold">Transfer</span>
+                <h2 className="text-lg font-black text-slate-900 mb-4">
+                    Aksi Cepat
+                </h2>
+                <div className="grid grid-cols-2 gap-3 pr-2">
+                    <button
+                        onClick={() => setIsTransferModalOpen(prev => !prev)}
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                    >
+                        <div className="w-12 h-12 bg-rose-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            💸
+                        </div>
+                        <span className="text-xs font-bold text-slate-900">Transfer</span>
                     </button>
-                    <button onClick={() => setIsIncomeModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
-                        <span className="text-2xl">+</span>
-                        <span className="text-sm font-semibold">Pemasukan</span>
+
+                    <button
+                        onClick={() => setIsIncomeModalOpen(prev => !prev)}
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                    >
+                        <div className="w-12 h-12 bg-emerald-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            📥
+                        </div>
+                        <span className="text-xs font-bold text-slate-900">Pemasukan</span>
                     </button>
-                    <button onClick={() => setIsExpenseModalOpen(prev => !prev)} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
-                        <span className="text-2xl">-</span>
-                        <span className="text-sm font-semibold">Pengeluaran</span>
+
+                    <button
+                        onClick={() => setIsExpenseModalOpen(prev => !prev)}
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                    >
+                        <div className="w-12 h-12 bg-amber-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            💸
+                        </div>
+                        <span className="text-xs font-bold text-slate-900">Pengeluaran</span>
                     </button>
+
                     {isDelete ? (
-                        <button onClick={() => {
-                            setIsDelete(false);
-                        }} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
-                            <span className="text-2xl">❌</span>
-                            <span className="text-sm font-semibold">Batal</span>
+                        <button
+                            onClick={() => setIsDelete(false)}
+                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                        >
+                            <div className="w-12 h-12 bg-slate-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                                ❌
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Batal</span>
                         </button>
                     ) : (
-                        <button onClick={() => {
-                            setIsDelete(true);
-                        }} className="p-3 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2">
-                            <span className="text-2xl">🗑️</span>
-                            <span className="text-sm font-semibold">Hapus Dompet</span>
+                        <button
+                            onClick={() => setIsDelete(true)}
+                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                        >
+                            <div className="w-12 h-12 bg-violet-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                                🗑️
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">Hapus Dompet</span>
                         </button>
                     )}
                 </div>
             </div>
+            
             {/* Modal Tambah Dompet */}
             <Modal titleModal="Tambah Dompet" isOpen={isModalOpen} setIsOpen={closeModal} >
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">

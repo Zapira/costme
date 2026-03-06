@@ -34,14 +34,14 @@ export default function BottomBar() {
                         <span className="font-bold text-[10px]">Beranda</span>
                     </Link>
 
-                    <Link href="/transactions" className={isActive("/transactions") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
-                        <BiTrendingUp size={24} />
-                        <span className="font-bold text-[10px]">Transaksi</span>
+                    <Link href="/app/wallet" className={isActive("/app/wallet") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
+                        <CgMonday size={24} />
+                        <span className="font-bold text-[10px]">Dompet</span>
                     </Link>
 
-                    <Link href="/app/management" className={isActive("/app/management") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
-                        <CgMonday size={24} />
-                        <span className="font-bold text-[10px]">Manajemen</span>
+                    <Link href="/history" className={isActive("/history") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
+                        <BiTrendingUp size={24} />
+                        <span className="font-bold text-[10px]">History</span>
                     </Link>
 
                     <button onClick={handleLogout} className={isActive("/settings") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>

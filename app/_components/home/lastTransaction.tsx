@@ -3,28 +3,35 @@ import { auth } from "@/app/_lib/firebaseAuth";
 import { db } from "@/app/_lib/firebaseDb";
 import { historyData } from "@/app/_types/walletType";
 import { onAuthStateChanged } from "firebase/auth";
-import { get, ref, set } from "firebase/database";
+import { get, ref } from "firebase/database";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function LastTransaction() {
+
     const [data, setData] = useState<historyData[]>([]);
     const [loading, setLoading] = useState(true);
 
     const getDataHistory = async (uid: string) => {
+
         try {
+
             setLoading(true);
+
             const historyRef = ref(db, `users/${uid}/history`);
             const snapshot = await get(historyRef);
 
-            console.log("Snapshot data:", snapshot.val());
-            if (!snapshot.exists()) return;
+            if (!snapshot.exists()) {
+                setData([]);
+                setLoading(false);
+                return;
+            }
 
             const historyData = snapshot.val();
 
             const filteredData: historyData[] = (Object.values(historyData) as historyData[])
                 .filter((item: historyData) =>
-                    item.type === "income" || item.type === "expense"
+                    item?.type === "income" || item?.type === "expense"
                 );
 
             const sortedData = filteredData.sort(
@@ -37,34 +44,44 @@ export default function LastTransaction() {
 
             const enrichedData = sortedData.map((item) => {
 
-                if (item.type === "income" || item.type === "expense") {
-                    const walletName = walletNamesData?.[item.walletId]?.name || "Unknown Wallet";
-                    return { ...item, walletName };
-                }
+                const walletName =
+                    walletNamesData?.[item.walletId]?.name || "Unknown Wallet";
 
-                return item;
+                return {
+                    ...item,
+                    walletName,
+                    amount: Number(item.amount) || 0
+                };
             });
-            console.log("Enriched data:", enrichedData);
 
             setData(enrichedData);
             setLoading(false);
+
         } catch (error) {
+
             console.error("Error fetching history data:", error);
+            setData([]);
             setLoading(false);
+
         }
+
     };
 
-
     useEffect(() => {
+
         const unsub = onAuthStateChanged(auth, async (user) => {
+
             if (user) {
                 await getDataHistory(user.uid);
             } else {
+                setData([]);
                 setLoading(false);
             }
+
         });
 
         return () => unsub();
+
     }, []);
 
     const expenseCategories = [
@@ -80,42 +97,71 @@ export default function LastTransaction() {
 
     return (
         <div className="mt-9">
+
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
-                <Link href="/transactions" className="text-sm font-bold text-purple-700">Lihat Semua</Link>
+                <Link href="/transactions" className="text-sm font-bold text-purple-700">
+                    Lihat Semua
+                </Link>
             </div>
+
             {loading ? (
+
                 <div className="w-full h-[120px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
                     <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-500 rounded-full animate-spin"></div>
                 </div>
+
             ) : data.length === 0 ? (
-                <div className="w-full h-[120px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
-                    <span className="text-gray-500">Belum ada transaksi</span>
+
+                <div className="w-full h-[120px] mt-5 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
+                    <span className="text-gray-500 font-semibold">
+                        Belum ada transaksi
+                    </span>
                 </div>
+
             ) : (
+
                 data.slice(0, 5).map((item: historyData, key: number) => {
+
+                    const categoryName =
+                        expenseCategories.find(cat => cat.id === Number(item.expenseCategoryId))?.name
+                        || "Lainnya";
+
                     return (
-                        <div key={key}>
-                            <div className="mt-4">
-                                <div className="border border-gray-300 rounded-2xl p-4 flex items-center space-x-4">
-                                    <div className={`rounded-xl  p-3 ${item.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                                        <span className="text-2xl">{item.type === 'income' ? '📈' : '💸'}</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <h2 className="text-lg font-bold">{expenseCategories.find(cat => cat.id === parseInt(item.expenseCategoryId))?.name || "Unknown Category"}</h2>
-                                        <span className="text-[12px] opacity-40 font-bold">{item.walletName} {item.timestamp}</span>
-                                    </div>
-                                    <div className="flex flex-col ml-auto">
-                                        <h2 className={`text-lg font-bold ${item.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>{item.type === 'income' ? `+ Rp. ${new Intl.NumberFormat('id-ID').format(item.amount)}` : `- Rp. ${new Intl.NumberFormat('id-ID').format(item.amount)}`}</h2>
-                                    </div>
+                        <div
+                            key={key}
+                            className="bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)]  mt-3"
+                        >
+                            <div className="flex items-center gap-3">
+                                {/* Icon */}
+                                <div
+                                    className={`w-12 h-12 ${item.type === 'income' ? 'bg-emerald-100' : 'bg-rose-100'} border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0`}
+                                >
+                                    {item.type === 'income' ? '📈' : '💸'}
                                 </div>
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold text-slate-900 truncate">
+                                        {categoryName}
+                                    </p>
+                                    <p className="text-xs text-slate-500 font-semibold">
+                                        {item.walletName} • {item.timestamp}
+                                    </p>
+                                </div>
+
+                                {/* Amount */}
+                                <span
+                                    className={`text-base font-black whitespace-nowrap ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}
+                                >
+                                    {item.type === 'income' ? '+' : '-'} Rp {new Intl.NumberFormat('id-ID').format(item.amount)}
+                                </span>
                             </div>
                         </div>
                     )
-
                 })
-            )}
 
+            )}
 
         </div>
     );
