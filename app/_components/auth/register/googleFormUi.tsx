@@ -2,7 +2,7 @@
 
 import { auth } from "@/app/_lib/firebaseAuth";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import {  ref, set } from "firebase/database";
+import { ref, set } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -14,61 +14,61 @@ export default function GoogleFormUI() {
     const { user } = useAuth();
 
     const handleLogin = async () => {
-    setLoading(true);
+        setLoading(true);
 
-    try {
-        console.log("START LOGIN");
+        try {
+            console.log("START LOGIN");
 
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: "select_account" });
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: "select_account" });
 
-        console.log("BEFORE POPUP");
-        const result = await signInWithPopup(auth, provider);
-        console.log("AFTER POPUP");
+            console.log("BEFORE POPUP");
+            const result = await signInWithPopup(auth, provider);
+            console.log("AFTER POPUP");
 
-        const user = result.user;
-        if (!user) {
-            console.log("USER NULL");
-            return;
+            const user = result.user;
+            if (!user) {
+                console.log("USER NULL");
+                return;
+            }
+
+            console.log("GETTING ID TOKEN");
+            const idToken = await user.getIdToken();
+            console.log("ID TOKEN OK");
+
+            console.log("CALLING API");
+            const response = await fetch("/api/sessionLogin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    idToken,
+                    userData: {
+                        name: user.displayName,
+                        email: user.email
+                    }
+                }),
+            });
+
+            console.log("API RESPONSE:", response.status);
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("API ERROR:", text);
+                return;
+            }
+
+            console.log("LOGIN SUCCESS");
+            window.location.href = "/app/home";
+
+        } catch (error) {
+            console.error("LOGIN ERROR:", error);
+        } finally {
+            setLoading(false);
         }
-
-        console.log("GETTING ID TOKEN");
-        const idToken = await user.getIdToken();
-        console.log("ID TOKEN OK");
-
-        console.log("CALLING API");
-        const response = await fetch("/api/sessionLogin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                idToken,
-                userData: {
-                    name: user.displayName,
-                    email: user.email
-                }
-            }),
-        });
-
-        console.log("API RESPONSE:", response.status);
-
-        if (!response.ok) {
-            const text = await response.text();
-            console.error("API ERROR:", text);
-            return;
-        }
-
-        console.log("LOGIN SUCCESS");
-        window.location.href = "/app/home";
-
-    } catch (error) {
-        console.error("LOGIN ERROR:", error);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
 
     const handleLogout = async () => {
@@ -93,106 +93,137 @@ export default function GoogleFormUI() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
-            <div className="absolute top-20 left-20 w-64 h-64 bg-purple-200 rounded-full blur-3xl opacity-60" />
-            <div className="absolute bottom-20 right-20 w-72 h-72 bg-pink-200 rounded-full blur-3xl opacity-60" />
-
+        <>
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="
-                    relative z-10
-                    w-full max-w-md
-                    bg-white/80 backdrop-blur-xl
-                    border border-gray-200
-                    rounded-2xl
-                    shadow-xl
-                    px-8 py-10
-                "
+                className="w-full max-w-md relative z-10 min-h-[80vh] flex flex-col items-center justify-center"
             >
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        Login/Register
-                    </h1>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Buat akun baru untuk mulai menggunakan{" "}
-                        <span className="font-semibold text-purple-700">
-                            COSTME
-                        </span>
-                    </p>
+                <div className="flex justify-center mb-6">
+                    <div className="w-20 h-20 bg-linear-to-br from-violet-500 to-purple-600 border-[4px] border-slate-900 rounded-3xl flex items-center justify-center text-white font-black text-3xl shadow-[8px_8px_0_0_rgb(15,23,42)] animate-float">
+                        💰
+                    </div>
                 </div>
 
-                {user ? (
-                    <button
-                        onClick={handleLogout}
-                        className="w-full px-6 py-4 bg-white border-[3px] border-slate-900 rounded-2xl text-base font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(139,92,246)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(139,92,246)] transition-all flex items-center justify-center gap-2"
-                    >
-                        Logout
-                    </button>
-                ) : (
-                    <motion.button
-                        whileHover={!loading ? { scale: 1.04 } : {}}
-                        whileTap={!loading ? { scale: 0.96 } : {}}
-                        onClick={handleLogin}
-                        disabled={loading}
-                        className="
-                        group relative
-                        w-full
-                        flex items-center justify-center gap-3
-                        px-6 py-3
-                        rounded-xl
-                        bg-white
-                        text-gray-800
-                        font-semibold
-                        border border-gray-300
-                        shadow-sm
-                        hover:shadow-md
-                        transition-all
-                        overflow-hidden
-                        disabled:opacity-60
-                        disabled:cursor-not-allowed
-                    "
-                    >
-                        <span className="
-                        absolute inset-0
-                        bg-linear-to-r from-purple-50 to-pink-50
-                        opacity-0 group-hover:opacity-100
-                        transition
-                    " />
+                <div className="bg-white border-[4px] border-slate-900 rounded-3xl shadow-[12px_12px_0_0_rgb(15,23,42)] overflow-hidden">
+                    <div className="bg-linear-to-br from-violet-500 to-purple-600 px-6 py-6 border-b-[4px] border-slate-900">
+                        <h1 className="text-2xl font-black text-white text-center mb-1">
+                            Welcome Back! 👋
+                        </h1>
+                        <p className="text-xs font-semibold text-white/90 text-center">
+                            Kelola keuangan dengan <span className="font-black">COSTME</span>
+                        </p>
+                    </div>
 
-                        <span className="relative flex items-center gap-3">
-                            {loading ? (
-                                <span className="w-5 h-5 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
-                            ) : (
-                                <Image
-                                    src="https://www.svgrepo.com/show/475656/google-color.svg"
-                                    alt="Google"
-                                    width={20}
-                                    height={20}
-                                />
-                            )}
+                    <div className="px-6 py-6">
+                        {user ? (
+                            <div className="space-y-3">
+                                <div className="bg-emerald-100 border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)]">
+                                    <p className="text-xs font-bold text-slate-600 mb-1">Login sebagai</p>
+                                    <p className="text-base font-black text-slate-900 truncate">{user.email}</p>
+                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full px-5 py-3.5 bg-rose-100 border-[3px] border-slate-900 rounded-2xl text-sm font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(15,23,42)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(15,23,42)] transition-all"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <motion.button
+                                    whileHover={!loading ? { scale: 1.02 } : {}}
+                                    whileTap={!loading ? { scale: 0.98 } : {}}
+                                    onClick={handleLogin}
+                                    disabled={loading}
+                                    className="w-full px-5 py-3.5 bg-white border-[3px] border-slate-900 rounded-2xl text-sm font-bold text-slate-900 shadow-[6px_6px_0_0_rgb(15,23,42)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0_0_rgb(15,23,42)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <span className="w-4 h-4 rounded-full border-[3px] border-violet-500 border-t-transparent animate-spin" />
+                                            <span>Menghubungkan...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Image
+                                                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                                                alt="Google"
+                                                width={20}
+                                                height={20}
+                                            />
+                                            <span>Login dengan Google</span>
+                                        </>
+                                    )}
+                                </motion.button>
 
-                            <span>
-                                {loading
-                                    ? "Menghubungkan..."
-                                    : "Login/Register dengan Google"}
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-1 h-[3px] bg-slate-900"></div>
+                                    <span className="text-xs font-bold text-slate-600 uppercase">atau</span>
+                                    <div className="flex-1 h-[3px] bg-slate-900"></div>
+                                </div>
+
+                                <div className="space-y-2.5">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-9 h-9 bg-emerald-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <span className="text-base">✓</span>
+                                        </div>
+                                        <span className="text-xs font-semibold text-slate-700">Gratis selamanya</span>
+                                    </div>
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-9 h-9 bg-cyan-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <span className="text-base">🔒</span>
+                                        </div>
+                                        <span className="text-xs font-semibold text-slate-700">Data aman & terenkripsi</span>
+                                    </div>
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-9 h-9 bg-amber-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <span className="text-base">📊</span>
+                                        </div>
+                                        <span className="text-xs font-semibold text-slate-700">Laporan keuangan detail</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <p className="text-[10px] font-semibold text-slate-500 text-center mt-5">
+                            Dengan login, kamu menyetujui{" "}
+                            <span className="text-violet-600 font-bold">
+                                Syarat & Ketentuan
+                            </span>{" "}
+                            dan{" "}
+                            <span className="text-violet-600 font-bold">
+                                Kebijakan Privasi
                             </span>
-                        </span>
-                    </motion.button>
-                )}
+                        </p>
+                    </div>
+                </div>
 
-                <p className="text-xs text-gray-500 text-center mt-6">
-                    Dengan mendaftar, kamu menyetujui{" "}
-                    <span className="text-purple-600 font-medium">
-                        Syarat & Ketentuan
-                    </span>{" "}
-                    dan{" "}
-                    <span className="text-purple-600 font-medium">
-                        Kebijakan Privasi
-                    </span>
+                <p className="text-center text-xs font-semibold text-slate-600 mt-4">
+                    💳 Kelola uang lebih mudah dengan COSTME
                 </p>
             </motion.div>
-        </div>
+
+            <style jsx>{`
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.3; }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 4s ease-in-out infinite;
+        }
+    `}</style>
+        </>
+
     );
 }
