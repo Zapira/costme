@@ -58,7 +58,7 @@ export default function Content() {
         .filter(item => item.type === 'expense')
         .reduce((sum, item) => sum + item.amount, 0);
 
-    const formatCurrency = (amount) => {
+    const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
@@ -66,7 +66,7 @@ export default function Content() {
         }).format(amount);
     };
 
-    const formatDate = (dateStr) => {
+    const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
         return date.toLocaleDateString('id-ID', {
             day: 'numeric',
@@ -218,22 +218,22 @@ export default function Content() {
                     <div className="space-y-3">
                         {filteredData.map((item, index) => (
                             <div
-                                key={item.id}
+                                key={index}
                                 className="bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                             >
                                 <div className="flex items-start gap-3 mb-3">
                                     <div
                                         className={`w-12 h-12 ${item.type === 'income' ? 'bg-emerald-100' : 'bg-rose-100'} border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0`}
                                     >
-                                        {item.icon}
+                                        icon
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-slate-900">{item.title}</p>
+                                        <p className="text-sm font-bold text-slate-900">{item.walletName}</p>
                                         <p className="text-xs text-slate-500 font-semibold mt-1">
-                                            {item.wallet} • {formatDate(item.date)}
+                                            {item.walletName} • {formatDate(item.timestamp)}
                                         </p>
                                         <span className="inline-block mt-1.5 text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg">
-                                            {item.category}
+                                            {item.type}
                                         </span>
                                     </div>
                                 </div>
