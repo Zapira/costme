@@ -27,7 +27,7 @@ export default function Hero() {
                     </h1>
 
                     <p className="text-base text-slate-600 font-semibold mb-6 leading-relaxed">
-                        MoneyManager membantu Anda mencatat setiap transaksi, melacak pengeluaran, dan merencanakan keuangan dengan cara yang simpel dan menyenangkan.
+                        MYCOST membantu Anda mencatat setiap transaksi, melacak pengeluaran, dan merencanakan keuangan dengan cara yang simpel dan menyenangkan.
                     </p>
 
                     <div className="space-y-3 mb-6">

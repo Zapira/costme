@@ -16,6 +16,7 @@
     "@types/sweetalert": "^1.1.28",
     "axios": "^1.13.4",
     "clsx": "^2.1.1",
+    "enhanced-resolve": "^5.20.0",
     "firebase": "^10.14.1",
     "firebase-admin": "^13.7.0",
     "firebaseui": "^6.1.0",

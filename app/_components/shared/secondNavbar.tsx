@@ -15,9 +15,9 @@ export default function SecondNavbar() {
             <nav className="flex justify-between items-center p-5 bg-white border-slate-900 sticky top-0 z-50">
                 <div className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-linear-to-br from-violet-500 to-purple-600 border-[3px] border-slate-900 rounded-xl flex items-center justify-center text-white font-black shadow-[4px_4px_0_0_rgb(15,23,42)]">
-                        C
+                        MY
                     </div>
-                    <h2 className="text-2xl font-black text-slate-900">COSTME</h2>
+                    <h2 className="text-2xl font-black text-slate-900">MYCOST</h2>
                 </div>
 
                 <button

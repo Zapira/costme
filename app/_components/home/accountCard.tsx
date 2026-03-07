@@ -85,7 +85,7 @@ export default function AccountCard() {
 
                         <div className="flex justify-between items-end">
                             <span className="text-base font-black text-white tracking-tight">
-                                CostMe
+                                MYCOST
                             </span>
 
                             <div className="text-right">

@@ -112,7 +112,7 @@ export default function GoogleFormUI() {
                             Welcome Back! 👋
                         </h1>
                         <p className="text-xs font-semibold text-white/90 text-center">
-                            Kelola keuangan dengan <span className="font-black">COSTME</span>
+                            Kelola keuangan dengan <span className="font-black">MYCOST</span>
                         </p>
                     </div>
 
@@ -200,7 +200,7 @@ export default function GoogleFormUI() {
                 </div>
 
                 <p className="text-center text-xs font-semibold text-slate-600 mt-4">
-                    💳 Kelola uang lebih mudah dengan COSTME
+                    💳 Kelola uang lebih mudah dengan MYCOST
                 </p>
             </motion.div>
 

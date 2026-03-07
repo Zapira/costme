@@ -404,7 +404,7 @@ export default function GlobeSample() {
             <div className="max-w-7xl mx-auto w-full relative h-full  px-4">
                 <motion.div variants={item}>
                     <h2 className="text-center text-xl md:text-4xl text-black font-bold">
-                        COSTME
+                        MYCOST
                     </h2>
                     <p className="text-center text-base md:text-lg bg-linear-to-r from-purple-500 to-purple-800 bg-clip-text text-transparent font-bold max-w-md mt-2 mx-auto">
                         Sudah digunakan oleh jutaan pengguna di seluruh dunia

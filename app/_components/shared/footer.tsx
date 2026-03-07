@@ -6,14 +6,14 @@ export default function Footer() {
                     {/* Logo */}
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 border-[3px] border-white rounded-xl flex items-center justify-center text-white font-black shadow-[4px_4px_0_0_rgba(255,255,255,0.2)]">
-                            C
+                            MY
                         </div>
-                        <h2 className="text-xl font-black text-white">COSTME</h2>
+                        <h2 className="text-xl font-black text-white">MYCOST</h2>
                     </div>
                     
                     {/* Copyright */}
                     <p className="text-xs text-slate-400 font-semibold text-center">
-                        © 2026 COSTME. All rights reserved.
+                        © 2026 MYCOST. All rights reserved.
                     </p>
                 </div>
             </div>

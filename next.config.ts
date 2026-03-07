@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: "/history",
+        destination: "/404",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
