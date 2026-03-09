@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
         console.log("WRITING TO DB");
 
-        await getAdminDb().ref(`users/${uid}`).set({
+        await getAdminDb().ref(`users/${uid}`).update({
             uid,
             name: userData.name,
             email: userData.email,
