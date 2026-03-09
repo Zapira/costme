@@ -29,7 +29,7 @@ export default function BottomBar() {
         <div className=" max-w-lg mx-auto fixed bottom-0 left-1/2 -translate-x-1/2 w-full bg-white border-t border-gray-300 z-10">
             <nav>
                 <div className="grid grid-cols-3 text-black">
-                    <Link href="/" className={isActive("/app") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
+                    <Link href="/app" className={isActive("/app") ? "flex flex-col items-center py-2 bg-gray-200" : "flex flex-col items-center py-2 hover:bg-gray-200"}>
                         <HiHome size={24} />
                         <span className="font-bold text-[10px]">Beranda</span>
                     </Link>
