@@ -76,12 +76,24 @@ export default function GoogleFormUI() {
         try {
             const user = auth.currentUser;
             if (user) {
-                const userRef = ref(db, "users/" + user.uid);
-                await update(userRef, { isLoggedIn: false });
-            }
+                const response = await fetch("/api/sessionLogout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                });
 
-            await signOut(auth);
-            console.log("LOGOUT SUCCESS");
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error("API LOGOUT ERROR:", text);
+                    return;
+                }
+                await signOut(auth);
+                console.log("SESSION LOGOUT SUCCESS");
+            }else{
+                console.log("NO USER TO LOGOUT");
+            }
         } catch (error) {
             console.error(error);
         } finally {
