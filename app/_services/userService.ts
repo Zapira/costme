@@ -12,9 +12,4 @@ export const getUser = async () => {
     if (!snapshot.exists()) return null;
 
     return snapshot.val();
-
-
-
-    
-
 }
