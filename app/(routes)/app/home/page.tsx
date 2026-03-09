@@ -10,10 +10,9 @@ function sleep(ms: number) {
 }
 
 export default async function Home() {
-    await sleep(2000);
+    await sleep(2000); 
 
     const user = await getUser();
-
 
     return (
         <div className="bg-gray-50 p-6 shadow-md max-w-lg mx-auto min-h-screen ">
