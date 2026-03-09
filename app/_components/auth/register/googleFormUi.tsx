@@ -2,7 +2,7 @@
 
 import { auth } from "@/app/_lib/firebaseAuth";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { ref, set } from "firebase/database";
+import { ref, set, update } from "firebase/database";
 import { db } from "@/app/_lib/firebaseDb";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -77,7 +77,7 @@ export default function GoogleFormUI() {
             const user = auth.currentUser;
             if (user) {
                 const userRef = ref(db, "users/" + user.uid);
-                await set(userRef, { isLoggedIn: false });
+                await update(userRef, { isLoggedIn: false });
             }
 
             await signOut(auth);
@@ -88,9 +88,6 @@ export default function GoogleFormUI() {
             setLoading(false);
         }
     };
-
-
-
 
     return (
         <>
