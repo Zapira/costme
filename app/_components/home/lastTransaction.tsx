@@ -44,7 +44,7 @@ export default function LastTransaction() {
                 return !walletsData || !walletsData[item.walletId];
             });
 
-            if(checkingIdWalletExist) {
+            if (checkingIdWalletExist) {
 
                 const updatedHistoryData = Object.entries(historyData as Record<string, historyData>).reduce((acc, [key, item]) => {
                     const walletName = walletsData && walletsData[item.walletId] ? walletsData[item.walletId].name : "Dompet Sudah Dihapus";
@@ -61,7 +61,7 @@ export default function LastTransaction() {
                 setLoading(false);
                 return;
 
-            }else{
+            } else {
                 const sortedData = Object.values(historyData as Record<string, historyData>).sort(
                     (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
                 );
@@ -127,9 +127,10 @@ export default function LastTransaction() {
             ) : data.length === 0 ? (
 
                 <div className="w-full h-[120px] mt-5 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
-                    <span className="text-gray-500 font-semibold">
-                        Belum ada transaksi
-                    </span>
+                    <div className="w-full h-48 flex flex-col items-center justify-center">
+                        <span className="text-4xl mb-3">😿</span>
+                        <span className="text-slate-500 font-semibold">Tidak ada transaksi</span>
+                    </div>
                 </div>
 
             ) : (
