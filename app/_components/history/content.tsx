@@ -121,7 +121,7 @@ export default function Content() {
         }
     `}</style>
             <div className="pb-24">
-                <div className="px-5 pb-4 flex justify-between items-center bg-white border-b-[3px] border-slate-900 sticky top-0 z-40">
+                <div className=" pb-4 flex justify-between items-center bg-white border-b-[3px] border-slate-900 sticky top-0 z-40">
                     <button
                         onClick={() => router.back()}
                         className="w-11 h-11 bg-white border-[3px] border-slate-900 rounded-xl flex items-center justify-center shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
@@ -138,7 +138,7 @@ export default function Content() {
                     </button>
                 </div>
 
-                <div className="px-5 pb-3 mt-4">
+                <div className=" pb-3 mt-4">
                     <div className="bg-white p-1.5 rounded-2xl border-[3px] border-slate-900 shadow-[4px_4px_0_0_rgb(15,23,42)] flex gap-2">
                         {[
                             { value: 'all', label: 'Semua' },
@@ -159,7 +159,7 @@ export default function Content() {
                     </div>
                 </div>
 
-                <div className="px-5 pb-4">
+                <div className=" pb-4">
                     <button
                         onClick={() => setShowDateFilter(!showDateFilter)}
                         className="w-full px-4 py-3 bg-white border-[3px] border-slate-900 rounded-xl text-sm font-bold text-slate-900 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all flex items-center justify-center gap-2"
@@ -177,7 +177,7 @@ export default function Content() {
                 {/* Date Filter Panel */}
 
                 {showDateFilter && (
-                    <div className="px-5 pb-5">
+                    <div className=" pb-5">
                         <div className="bg-white border-[3px] border-slate-900 rounded-2xl p-5 shadow-[6px_6px_0_0_rgb(15,23,42)]">
                             <h4 className="text-sm font-black text-slate-900 mb-4">Pilih Rentang Tanggal</h4>
 
@@ -222,7 +222,7 @@ export default function Content() {
                 )}
 
                 {(startDate && endDate) && (
-                    <div className="px-5 pb-4">
+                    <div className="pb-4">
                         <div className="bg-violet-100 border-[3px] border-slate-900 rounded-xl p-3 shadow-[4px_4px_0_0_rgb(15,23,42)] flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-900">
                                 📅 {formatDate(startDate)} - {formatDate(endDate)}
@@ -256,7 +256,7 @@ export default function Content() {
                 </div> */}
 
                 {/* History List */}
-                <div className="px-5 pb-6">
+                <div className="pb-6">
                     <h3 className="text-lg font-black text-slate-900 mb-4">
                         {filter === 'all' ? 'Semua Transaksi' : filter === 'income' ? 'Pemasukan' : 'Pengeluaran'} ({filteredData.length})
                     </h3>
