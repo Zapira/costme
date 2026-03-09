@@ -701,7 +701,7 @@ export default function Content() {
                     </div>
                     <div className="mb-4">
                         <label htmlFor="">Keterangan</label>
-                        <input type="text" {...registerIncome("description", { required: true })} className={`w-full border rounded-md p-2 mt-1 ${incomeErrors.description ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan keterangan" />
+                        <input type="text" {...registerExpense("description", { required: true })} className={`w-full border rounded-md p-2 mt-1 ${expenseErrors.description ? 'border-red-500' : 'border-purple-500'}`} placeholder="Masukkan keterangan" />
                     </div>
                     <button type="submit" className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors">Simpan</button>
                 </form>
