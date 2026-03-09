@@ -20,7 +20,7 @@ export default function LastTransaction() {
 
             const [incomeSnapshot, expenseSnapshot] = await Promise.all([
                 get(ref(db, `users/${uid}/history-income`)),
-                get(ref(db, `users/${uid}/history-expense`))
+                get(ref(db, `users/${uid}/history`))
             ]);
 
             const incomeData = incomeSnapshot.val();
@@ -35,15 +35,41 @@ export default function LastTransaction() {
 
             const historyData = { ...incomeData, ...expenseData };
 
+            const dataWallets = ref(db, `users/${uid}/wallets`);
+            const checkingWalletSnapshot = await get(dataWallets);
+            const walletsData = checkingWalletSnapshot.val();
 
-            const sortedData = (Object.values(historyData) as historyData[]).sort(
-                (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-            );
 
-            console.log("Sorted History Data:", sortedData);
-            setData(sortedData);
-            setLoading(false);
+            const checkingIdWalletExist = Object.values(historyData as Record<string, historyData>).some((item: historyData) => {
+                return !walletsData || !walletsData[item.walletId];
+            });
 
+            if(checkingIdWalletExist) {
+
+                const updatedHistoryData = Object.entries(historyData as Record<string, historyData>).reduce((acc, [key, item]) => {
+                    const walletName = walletsData && walletsData[item.walletId] ? walletsData[item.walletId].name : "Dompet Sudah Dihapus";
+                    acc[key] = { ...item, walletName };
+                    return acc;
+                }, {} as Record<string, historyData>);
+
+                const sortedUpdatedData = Object.values(updatedHistoryData).sort(
+                    (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                );
+
+                console.log("Sorted Updated History Data:", sortedUpdatedData);
+                setData(sortedUpdatedData);
+                setLoading(false);
+                return;
+
+            }else{
+                const sortedData = Object.values(historyData as Record<string, historyData>).sort(
+                    (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                );
+
+                console.log("Sorted History Data:", sortedData);
+                setData(sortedData);
+                setLoading(false);
+            }
         } catch (error) {
 
             console.error("Error fetching history data:", error);
@@ -83,7 +109,7 @@ export default function LastTransaction() {
     ];
 
     return (
-        <div className="mt-9">
+        <div className="mt-9 mb-16">
 
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
@@ -108,7 +134,7 @@ export default function LastTransaction() {
 
             ) : (
 
-                data.slice(0, 5).map((item: historyData, key: number) => {
+                data.slice(0, 4).map((item: historyData, key: number) => {
 
                     const categoryName =
                         expenseCategories.find(cat => cat.id === Number(item.expenseCategoryId))?.name
