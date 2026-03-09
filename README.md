@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyCost
 
-## Getting Started
+**MyCost** adalah aplikasi **money management** untuk membantu pengguna mencatat pemasukan, pengeluaran, dan mengelola dompet keuangan dengan mudah.
 
-First, run the development server:
+Aplikasi ini dirancang agar **ringan, cepat, dan mudah digunakan** untuk kebutuhan pencatatan keuangan sehari-hari tanpa fitur yang terlalu kompleks.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Current Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Wallet Management**  
+  Membuat dan mengelola beberapa dompet keuangan seperti cash, bank, atau e-wallet.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Income & Expense Tracking**  
+  Mencatat transaksi pemasukan dan pengeluaran dengan mudah.
 
-## Learn More
+- **Transaction History**  
+  Melihat riwayat transaksi secara kronologis.
 
-To learn more about Next.js, take a look at the following resources:
+- **Top Up Balance**  
+  Menambahkan saldo ke dalam dompet yang dimiliki.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Transfer**
+  Melakukan perpindahan dana antar dompet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Transaction Notes**  
+  Menambahkan catatan pada setiap transaksi untuk informasi tambahan.
 
-## Deploy on Vercel
+- **Simple Dashboard**  
+  Menampilkan ringkasan saldo dan aktivitas keuangan pengguna.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚧 In Progress
+
+- **Monthly Budget**  
+  Pengguna dapat menentukan batas pengeluaran bulanan untuk membantu mengontrol keuangan.
+
+---
+
+## 🗺 Roadmap
+
+Fitur yang direncanakan untuk pengembangan selanjutnya:
+
+- Transaction categories
+- Financial statistics & charts
+- Recurring transactions
+- Bill reminders
+- Data export
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend** : React / Next.js
+- **Database** : Firebase
+- **Platform** : Web / PWA
+
+---
+
+## 🎯 Project Goal
+
+MyCost dibuat untuk memberikan alternatif aplikasi pencatatan keuangan yang **sederhana, cepat, dan gratis**, serta akan terus dikembangkan dengan fitur-fitur baru di masa depan.
+
+---
+
+## 📄 License
+
+Source code is not allowed to be copied, modified, or redistributed without permission.
