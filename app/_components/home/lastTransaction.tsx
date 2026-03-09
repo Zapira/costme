@@ -113,7 +113,7 @@ export default function LastTransaction() {
 
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
-                <Link href="/transactions" className="text-sm font-bold text-purple-700">
+                <Link href="/app/history" className="text-sm font-bold text-purple-700">
                     Lihat Semua
                 </Link>
             </div>
