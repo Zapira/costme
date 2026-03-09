@@ -121,7 +121,7 @@ export default function Content() {
         }
     `}</style>
             <div className="pb-24">
-                <div className=" pb-4 flex justify-between items-center bg-white border-b-[3px] border-slate-900 sticky top-0 z-40">
+                <div className=" pb-4 flex justify-between items-center bg-white border-b-[3px] border-slate-900 ">
                     <button
                         onClick={() => router.back()}
                         className="w-11 h-11 bg-white border-[3px] border-slate-900 rounded-xl flex items-center justify-center shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
