@@ -8,11 +8,11 @@ export function proxy(req: NextRequest) {
 
     // jika belum login dan akses /app
     if (!isAuth && pathname.startsWith("/app")) {
-        return NextResponse.redirect(new URL("/login", req.url));
+        return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
     // jika sudah login dan buka login page
-    if (isAuth && pathname === "/login") {
+    if (isAuth && pathname === "/auth/login") {
         return NextResponse.redirect(new URL("/app/home", req.url));
     }
 
