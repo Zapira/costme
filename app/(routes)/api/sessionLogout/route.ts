@@ -23,13 +23,7 @@ export async function POST() {
 
     const response = NextResponse.json({ success: true });
 
-    response.cookies.set("session", "", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 0, 
-    });
+    response.cookies.delete('session');
 
     return response;
 }
