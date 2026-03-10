@@ -2,36 +2,30 @@
 import { auth } from "@/app/_lib/firebaseAuth";
 import { db } from "@/app/_lib/firebaseDb";
 import { onAuthStateChanged } from "firebase/auth";
-import { ref, get } from "firebase/database";
+import { ref, get, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 
 export default function AccountCard() {
     const [totalBalance, setTotalBalance] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const getTotalBalance = async (uid: string) => {
-        const totalBalanceRef = ref(db, `users/${uid}/totalBalance`);
-        const snapshot = await get(totalBalanceRef);
-
-        if (snapshot.exists()) {
-            setTotalBalance(snapshot.val());
-        } else {
-            setTotalBalance(0);
-        }
-
-        setLoading(false);
-    };
-
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, async (user) => {
+        const unsubAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
-                await getTotalBalance(user.uid);
+                const totalBalanceRef = ref(db, `users/${user.uid}/totalBalance`);
+
+                const unsubValue = onValue(totalBalanceRef, (snapshot) => {
+                    setTotalBalance(snapshot.exists() ? snapshot.val() : 0);
+                    setLoading(false);
+                });
+
+                return () => unsubValue();
             } else {
                 setLoading(false);
             }
         });
 
-        return () => unsub();
+        return () => unsubAuth(); 
     }, []);
 
     return (
