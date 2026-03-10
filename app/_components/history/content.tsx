@@ -183,7 +183,7 @@ export default function Content() {
 
                             <div className="space-y-3">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-600 mb-2">Dari Tanggal</label>
+                                    <label className="bloc.k text-xs font-bold text-slate-600 mb-2">Dari Tanggal</label>
                                     <input
                                         type="date"
                                         value={startDate}

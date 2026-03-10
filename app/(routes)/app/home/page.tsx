@@ -1,5 +1,6 @@
 import AccountCard from "@/app/_components/home/accountCard";
 import LastTransaction from "@/app/_components/home/lastTransaction";
+import ListMenu from "@/app/_components/home/listMenu";
 import RemainingCard from "@/app/_components/home/remainingCard";
 import BottomBar from "@/app/_components/shared/bottomBar";
 import Navbar from "@/app/_components/shared/navbar";
@@ -20,6 +21,7 @@ console.log("USER DATA:", user);
             <BottomBar />
             <AccountCard />
             <RemainingCard />
+            <ListMenu user={user} />
             <LastTransaction />
         </div>
     );

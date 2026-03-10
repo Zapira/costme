@@ -1,9 +1,9 @@
 'use client';
 import { auth } from "@/app/_lib/firebaseAuth";
 import { db } from "@/app/_lib/firebaseDb";
-import { historyData } from "@/app/_types/walletType";
+import { historyData, WalletType } from "@/app/_types/walletType";
 import { onAuthStateChanged } from "firebase/auth";
-import { get, ref } from "firebase/database";
+import { off, onValue, ref } from "firebase/database";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -12,72 +12,57 @@ export default function LastTransaction() {
     const [data, setData] = useState<historyData[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const getDataHistory = async (uid: string) => {
+    const getDataHistory = (uid: string) => {
+        setLoading(true);
 
-        try {
+        const incomeRef = ref(db, `users/${uid}/history-income`);
+        const expenseRef = ref(db, `users/${uid}/history`);
+        const walletsRef = ref(db, `users/${uid}/wallets`);
 
-            setLoading(true);
+        let incomeData: Record<string, historyData> = {};
+        let expenseData: Record<string, historyData> = {};
+        let walletsData: Record<string, WalletType> = {};
 
-            const [incomeSnapshot, expenseSnapshot] = await Promise.all([
-                get(ref(db, `users/${uid}/history-income`)),
-                get(ref(db, `users/${uid}/history`))
-            ]);
-
-            const incomeData = incomeSnapshot.val();
-            const expenseData = expenseSnapshot.val();
-
-
-            if (!incomeSnapshot.exists() && !expenseSnapshot.exists()) {
-                setData([]);
-                setLoading(false);
-                return;
-            }
-
+        const updateData = () => {
             const historyData = { ...incomeData, ...expenseData };
 
-            const dataWallets = ref(db, `users/${uid}/wallets`);
-            const checkingWalletSnapshot = await get(dataWallets);
-            const walletsData = checkingWalletSnapshot.val();
+            const updatedHistoryData = Object.entries(historyData).reduce((acc, [key, item]) => {
+                const walletName =
+                    walletsData && walletsData[item.walletId]
+                        ? walletsData[item.walletId].name
+                        : "Dompet Sudah Dihapus";
+                acc[key] = { ...item, walletName };
+                return acc;
+            }, {} as Record<string, historyData>);
 
+            const sortedData = Object.values(updatedHistoryData).sort(
+                (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
 
-            const checkingIdWalletExist = Object.values(historyData as Record<string, historyData>).some((item: historyData) => {
-                return !walletsData || !walletsData[item.walletId];
-            });
-
-            if (checkingIdWalletExist) {
-
-                const updatedHistoryData = Object.entries(historyData as Record<string, historyData>).reduce((acc, [key, item]) => {
-                    const walletName = walletsData && walletsData[item.walletId] ? walletsData[item.walletId].name : "Dompet Sudah Dihapus";
-                    acc[key] = { ...item, walletName };
-                    return acc;
-                }, {} as Record<string, historyData>);
-
-                const sortedUpdatedData = Object.values(updatedHistoryData).sort(
-                    (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-                );
-
-                console.log("Sorted Updated History Data:", sortedUpdatedData);
-                setData(sortedUpdatedData);
-                setLoading(false);
-                return;
-
-            } else {
-                const sortedData = Object.values(historyData as Record<string, historyData>).sort(
-                    (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-                );
-
-                console.log("Sorted History Data:", sortedData);
-                setData(sortedData);
-                setLoading(false);
-            }
-        } catch (error) {
-
-            console.error("Error fetching history data:", error);
-            setData([]);
+            setData(sortedData);
             setLoading(false);
+        };
 
-        }
+        const unsubIncome = onValue(incomeRef, (snap) => {
+            incomeData = snap.exists() ? snap.val() : {};
+            updateData();
+        });
 
+        const unsubExpense = onValue(expenseRef, (snap) => {
+            expenseData = snap.exists() ? snap.val() : {};
+            updateData();
+        });
+
+        const unsubWallets = onValue(walletsRef, (snap) => {
+            walletsData = snap.exists() ? snap.val() : {};
+            updateData();
+        });
+
+        return () => {
+            off(incomeRef, "value", unsubIncome);
+            off(expenseRef, "value", unsubExpense);
+            off(walletsRef, "value", unsubWallets);
+        };
     };
 
     useEffect(() => {
@@ -113,7 +98,7 @@ export default function LastTransaction() {
 
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Transaksi Terbaru</h2>
-                <Link href="/transactions" className="text-sm font-bold text-purple-700">
+                <Link href="/app/history" className="text-sm font-bold text-purple-700">
                     Lihat Semua
                 </Link>
             </div>
