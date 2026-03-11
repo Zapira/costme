@@ -2,7 +2,7 @@
 import { auth } from "@/app/_lib/firebaseAuth";
 import { db } from "@/app/_lib/firebaseDb";
 import { onAuthStateChanged } from "firebase/auth";
-import { ref, get, onValue } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 
 export default function AccountCard() {
@@ -32,12 +32,12 @@ export default function AccountCard() {
         <div className="mt-6 flex justify-center pr-2">
 
             {loading ? (
-                <div className="w-full h-[200px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
+                <div className="w-full h-52 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
                     <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-500 rounded-full animate-spin"></div>
                 </div>
             ) : (
                 <div
-                    className="relative w-full h-[200px] rounded-2xl overflow-hidden border-[3px] border-slate-900"
+                    className="relative w-full h-52 rounded-2xl overflow-hidden border-[3px] border-slate-900"
                     style={{
                         background: "linear-gradient(135deg, #a855f7 0%, #ec4899 60%, #f97316 100%)",
                         boxShadow: "6px 6px 0px 0px #1e1b4b",
@@ -51,8 +51,8 @@ export default function AccountCard() {
                         }}
                     />
 
-                    <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full opacity-10 border-[20px] border-white" />
-                    <div className="absolute -right-4 -bottom-10 w-32 h-32 rounded-full opacity-10 border-[16px] border-white" />
+                    <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full opacity-10 border-8 border-white" />
+                    <div className="absolute -right-4 -bottom-10 w-32 h-32 rounded-full opacity-10 border-8 border-white" />
 
                     <div
                         className="absolute top-5 right-5 w-9 h-7 rounded-md border-2 border-white/40"

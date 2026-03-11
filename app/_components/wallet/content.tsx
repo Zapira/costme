@@ -501,7 +501,7 @@ export default function Content() {
                                 className="bg-white border-[3px] border-slate-900 rounded-2xl p-5 shadow-[6px_6px_0_0_rgb(15,23,42)] "
                             >
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-14 h-14 bg-amber-400 border-[3px] border-slate-900 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 shadow-[3px_3px_0_0_rgb(15,23,42)]">
+                                    <div className="w-14 h-14 bg-amber-400 border-[3px] border-slate-900 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-[3px_3px_0_0_rgb(15,23,42)]">
                                         {walletIcons[wallet.icon || 0]}
                                     </div>
                                     <div className="flex-1">
@@ -511,7 +511,7 @@ export default function Content() {
                                     {isDelete && (
                                         <button
                                             onClick={() => handleDeleteWallet(wallet.id)}
-                                            className="w-10 h-10 bg-rose-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center "
+                                            className="w-10 h-10 bg-rose-100 border-2 border-slate-900 rounded-xl flex items-center justify-center "
                                         >
                                             <FaTrash className="text-rose-600" size={16} />
                                         </button>
@@ -520,9 +520,9 @@ export default function Content() {
 
                                 {/* Progress Bar */}
                                 <div className="relative">
-                                    <div className="w-full h-2 bg-slate-100 rounded-full border-[2px] border-slate-900 overflow-hidden">
+                                    <div className="w-full h-2 bg-slate-100 rounded-full border-2 border-slate-900 overflow-hidden">
                                         <div
-                                            className="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full transition-all duration-1000"
+                                            className="h-full bg-linear-to-r from-violet-500 to-purple-600 rounded-full transition-all duration-1000"
                                             style={{ width: `${Math.min((Number(wallet.balance) / totalBalance) * 100, 100)}%` }}
                                         ></div>
                                     </div>
@@ -544,9 +544,9 @@ export default function Content() {
                 <div className="grid grid-cols-2 gap-3 pr-2">
                     <button
                         onClick={() => setIsTransferModalOpen(prev => !prev)}
-                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                     >
-                        <div className="w-12 h-12 bg-rose-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                        <div className="w-12 h-12 bg-rose-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                             💸
                         </div>
                         <span className="text-xs font-bold text-slate-900">Transfer</span>
@@ -554,9 +554,9 @@ export default function Content() {
 
                     <button
                         onClick={() => setIsIncomeModalOpen(prev => !prev)}
-                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                     >
-                        <div className="w-12 h-12 bg-emerald-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                        <div className="w-12 h-12 bg-emerald-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                             📥
                         </div>
                         <span className="text-xs font-bold text-slate-900">Pemasukan</span>
@@ -564,9 +564,9 @@ export default function Content() {
 
                     <button
                         onClick={() => setIsExpenseModalOpen(prev => !prev)}
-                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                        className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                     >
-                        <div className="w-12 h-12 bg-amber-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                        <div className="w-12 h-12 bg-amber-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                             💸
                         </div>
                         <span className="text-xs font-bold text-slate-900">Pengeluaran</span>
@@ -575,9 +575,9 @@ export default function Content() {
                     {isDelete ? (
                         <button
                             onClick={() => setIsDelete(false)}
-                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                         >
-                            <div className="w-12 h-12 bg-slate-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            <div className="w-12 h-12 bg-slate-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                                 ❌
                             </div>
                             <span className="text-xs font-bold text-slate-900">Batal</span>
@@ -585,9 +585,9 @@ export default function Content() {
                     ) : (
                         <button
                             onClick={() => setIsDelete(true)}
-                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
+                            className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                         >
-                            <div className="w-12 h-12 bg-violet-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            <div className="w-12 h-12 bg-violet-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                                 🗑️
                             </div>
                             <span className="text-xs font-bold text-slate-900">Hapus Dompet</span>

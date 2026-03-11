@@ -105,13 +105,13 @@ export default function LastTransaction() {
 
             {loading ? (
 
-                <div className="w-full h-[120px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
+                <div className="w-full h-52 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
                     <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-500 rounded-full animate-spin"></div>
                 </div>
 
             ) : data.length === 0 ? (
 
-                <div className="w-full h-[120px] mt-5 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
+                <div className="w-full h-52 mt-5 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl">
                     <div className="w-full h-48 flex flex-col items-center justify-center">
                         <span className="text-4xl mb-3">😿</span>
                         <span className="text-slate-500 font-semibold">Tidak ada transaksi</span>
@@ -133,7 +133,7 @@ export default function LastTransaction() {
                         >
                             <div className="flex items-center gap-3">
                                 <div
-                                    className={`w-12 h-12 ${item.type === 'income' ? 'bg-emerald-100' : 'bg-rose-100'} border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0`}
+                                    className={`w-12 h-12 ${item.type === 'income' ? 'bg-emerald-100' : 'bg-rose-100'} border-2 border-slate-900 rounded-xl flex items-center justify-center text-xl shrink-0`}
                                 >
                                     {item.type === 'income' ? '📈' : '💸'}
                                 </div>

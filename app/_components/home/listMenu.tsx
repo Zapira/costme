@@ -15,31 +15,20 @@ export default function ListMenu({ user }: { user: UserType }) {
         setIsTransferModalOpen(true);
     }
 
-    const handleCloseTransferModal = () => {
-        setIsTransferModalOpen(false);
-    }
-
     const handleOpenIncomeModal = () => {
         setIsIncomeModalOpen(true);
-    }
-
-    const handleCloseIncomeModal = () => {
-        setIsIncomeModalOpen(false);
     }
 
     const handleOpenExpenseModal = () => {
         setIsExpenseModalOpen(true);
     }
 
-    const handleCloseExpenseModal = () => {
-        setIsExpenseModalOpen(false);
-    }
 
     return (
         <>
-            <div className="bg-white border-2 border-slate-900 rounded-xl p-3 shadow-[3px_3px_0_0_rgb(15,23,42)] mt-5">
+            <div className="bg-white border-2 border-slate-900 rounded-xl p-3 shadow-[6px_6px_0_0_rgb(15,23,42)] mt-5 mr-2">
                 <div className="grid grid-cols-4 gap-3 ">
-                    <button onClick={handleOpenTransferModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all">
+                    <button onClick={handleOpenTransferModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-0.5 active:translate-y-0.5 transition-all">
                         <div className="w-9 h-9 bg-rose-100 border-2 border-slate-900 rounded-lg flex items-center justify-center text-lg">
                             💸
                         </div>
@@ -48,7 +37,7 @@ export default function ListMenu({ user }: { user: UserType }) {
                         </span>
                     </button>
 
-                    <button onClick={handleOpenIncomeModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all">
+                    <button onClick={handleOpenIncomeModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-0.5 active:translate-y-0.5 transition-all">
                         <div className="w-9 h-9 bg-emerald-100 border-2 border-slate-900 rounded-lg flex items-center justify-center text-lg">
                             📥
                         </div>
@@ -57,7 +46,7 @@ export default function ListMenu({ user }: { user: UserType }) {
                         </span>
                     </button>
 
-                    <button onClick={handleOpenExpenseModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all">
+                    <button onClick={handleOpenExpenseModal} className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-0.5 active:translate-y-0.5 transition-all">
                         <div className="w-9 h-9 bg-amber-100 border-2 border-slate-900 rounded-lg flex items-center justify-center text-lg">
                             💸
                         </div>
@@ -65,7 +54,7 @@ export default function ListMenu({ user }: { user: UserType }) {
                             Pengeluaran
                         </span>
                     </button>
-                    <Link href="/app/monthly-budget" className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all">
+                    <Link href="/app/monthly-budget" className="flex flex-col items-center gap-1 p-2 rounded-xl active:translate-x-0.5 active:translate-y-0.5 transition-all">
                         <div className="w-9 h-9 bg-amber-100 border-2 border-slate-900 rounded-lg flex items-center justify-center text-lg">
                             💸
                         </div>
