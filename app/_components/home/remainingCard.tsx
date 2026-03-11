@@ -82,10 +82,10 @@ export default function RemainingCard() {
 
             {loading ? (
                 <>
-                    <div className="w-full h-[100px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl mt-5">
+                    <div className="w-full h-24 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl mt-5">
                         <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-500 rounded-full animate-spin"></div>
                     </div>
-                    <div className="w-full h-[100px] flex items-center justify-center border-[3px] border-slate-900 rounded-2xl mt-5">
+                    <div className="w-full h-24 flex items-center justify-center border-[3px] border-slate-900 rounded-2xl mt-5">
                         <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-500 rounded-full animate-spin"></div>
                     </div>
                 </>
@@ -93,7 +93,7 @@ export default function RemainingCard() {
                 <>
                     <div className="w-full border-[3px] border-slate-900 rounded-2xl p-4 sm:p-5 flex items-center gap-3 bg-emerald-100 shadow-[6px_6px_0_0_rgb(15,23,42)] mt-4">
 
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white border-[2px] border-slate-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white border-2 border-slate-900 rounded-xl flex items-center justify-center shrink-0">
                             <FaArrowTrendUp size={18} className="text-emerald-600 sm:text-[20px]" />
                         </div>
 
@@ -112,7 +112,7 @@ export default function RemainingCard() {
 
                     <div className="w-full border-[3px] border-slate-900 rounded-2xl p-4 sm:p-5 flex items-center gap-3 bg-rose-100 shadow-[6px_6px_0_0_rgb(15,23,42)] mt-4">
 
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white border-[2px] border-slate-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white border-2 border-slate-900 rounded-xl flex items-center justify-center shrink-0">
                             <FaArrowTrendDown size={18} className="text-rose-600 sm:text-[20px]" />
                         </div>
 
