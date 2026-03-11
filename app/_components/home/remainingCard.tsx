@@ -4,7 +4,7 @@ import { auth } from "@/app/_lib/firebaseAuth";
 import { db } from "@/app/_lib/firebaseDb";
 import { historyData } from "@/app/_types/walletType";
 import { onAuthStateChanged } from "firebase/auth";
-import { get, ref } from "firebase/database";
+import { off, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6"
 
@@ -18,29 +18,37 @@ export default function RemainingCard() {
     const getDataIncomeNow = async (uid: string) => {
         try {
 
-            const [incomeSnapshot, expenseSnapshot] = await Promise.all([
-                get(ref(db, `users/${uid}/history-income`)),
-                get(ref(db, `users/${uid}/history-expense`))
-            ]);
+            const incomeRef = ref(db, `users/${uid}/history-income`);
+            const expenseRef = ref(db, `users/${uid}/history`);
 
-            const incomeData = incomeSnapshot.val();
-            const expenseData = expenseSnapshot.val();
+            let incomeData: Record<string, historyData> = {};
+            let expenseData: Record<string, historyData> = {};
 
-            if (!incomeSnapshot.exists() && !expenseSnapshot.exists()) {
-                setData([]);
+            const updateData= () => {
+                const historyData = { ...incomeData, ...expenseData };
+
+                const sortedData = Object.values(historyData).sort(
+                    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                );
+
+                setData(sortedData);
                 setLoading(false);
-                return;
             }
 
-            const historyData = { ...incomeData, ...expenseData };
+            const unsubIncome = onValue(incomeRef, (snap) => {
+                incomeData = snap.exists() ? snap.val() : {};
+                updateData();
+            });
 
-            const sortedData = (Object.values(historyData) as historyData[]).sort(
-                (a: historyData, b: historyData) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-            );
+            const unsubExpense = onValue(expenseRef, (snap) => {
+                expenseData = snap.exists() ? snap.val() : {};
+                updateData();
+            });
 
-            setData(sortedData);
-            setLoading(false);
-
+            return () => {
+                off(incomeRef, 'value', unsubIncome);
+                off(expenseRef, 'value', unsubExpense);
+            };
         } catch (error) {
             console.error("Error fetching history data:", error);
             setData([]);
@@ -49,19 +57,14 @@ export default function RemainingCard() {
     };
 
     useEffect(() => {
-
         const unsub = onAuthStateChanged(auth, async (user) => {
-
             if (user) {
                 await getDataIncomeNow(user.uid);
             } else {
                 setLoading(false);
             }
-
         });
-
         return () => unsub();
-
     }, []);
 
 
