@@ -587,7 +587,7 @@ export default function Content() {
                             onClick={() => setIsDelete(true)}
                             className="flex flex-col items-center gap-2 bg-white border-[3px] border-slate-900 rounded-2xl p-4 shadow-[4px_4px_0_0_rgb(15,23,42)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgb(15,23,42)] transition-all"
                         >
-                            <div className="w-12 h-12 bg-violet-100 border-2 border-slate-900 rounded-xl flex items-center justify-center text-2xl">
+                            <div className="w-12 h-12 bg-violet-100 border-[2px] border-slate-900 rounded-xl flex items-center justify-center text-2xl">
                                 🗑️
                             </div>
                             <span className="text-xs font-bold text-slate-900">Hapus Dompet</span>

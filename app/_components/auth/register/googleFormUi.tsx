@@ -90,7 +90,6 @@ export default function GoogleFormUI() {
                     return;
                 }
                 await signOut(auth);
-                console.log("SESSION LOGOUT SUCCESS");
             }else{
                 console.log("NO USER TO LOGOUT");
             }
